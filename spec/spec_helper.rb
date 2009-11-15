@@ -38,7 +38,7 @@ module TabletasticSpecHelper
   include ActionView::Helpers::CaptureHelper
   include ActiveSupport
   include ActionController::PolymorphicRoutes
-  
+
   def self.included(base)
     base.class_eval do
       attr_accessor :output_buffer
@@ -50,8 +50,8 @@ module TabletasticSpecHelper
 
   module ::RspecHpricotMatchers
     def have_table_with_tag(selector, inner_text_or_options = nil, options = {}, &block)
-      HaveTag.new("table", nil, {}) && 
-      HaveTag.new(selector, inner_text_or_options, options, &block)
+      HaveTag.new("table", nil, {}) &&
+        HaveTag.new(selector, inner_text_or_options, options, &block)
     end
   end
 
@@ -69,4 +69,3 @@ module TabletasticSpecHelper
     ::Post.stub!(:human_name).and_return('Post')
   end
 end
-

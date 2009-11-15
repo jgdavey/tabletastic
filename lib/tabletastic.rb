@@ -1,9 +1,16 @@
 module Tabletastic
 
-  def table_for(collection)
-    concat(tag(:table, nil, true))
+  def table_for(collection, *args)
+    options = args.extract_options!
+    options[:html] ||= {}
+    options[:html][:id] ||= get_id_for(collection)
+    concat(tag(:table, options[:html], true))
     yield TableBuilder.new(collection, self)
     concat("</table>")
+  end
+
+  def get_id_for(collection)
+    !collection.empty? && collection.first.class.to_s.tableize
   end
 
   class TableBuilder
@@ -12,10 +19,15 @@ module Tabletastic
       @collection, @template = collection, template
     end
 
-    def data(*args)
-      @fields = args unless args.empty?
-      headers +
-      body
+    def data(*args, &block)
+      if block_given?
+        yield self
+        @template.concat(headers)
+        @template.concat(body)
+      else
+        @fields = args unless args.empty?
+        headers + body
+      end
     end
 
     def headers
@@ -40,7 +52,8 @@ module Tabletastic
 
     def body_rows
       @collection.inject("") do |rows, record|
-        rows += @template.content_tag_for(:tr, record) do
+        rowclass = cycle("odd","even")
+        rows += @template.content_tag_for(:tr, record, :class => rowclass) do
           tds_for_row(record)
         end
       end
@@ -56,6 +69,11 @@ module Tabletastic
       record.send(method_or_attribute)
     end
 
+    def cell(method_or_attribute)
+      @fields ||= []
+      @fields << method_or_attribute.to_sym
+      return ""
+    end
 
     def fields
       return @fields if defined?(@fields)

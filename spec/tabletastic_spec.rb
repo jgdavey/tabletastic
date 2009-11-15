@@ -36,6 +36,14 @@ describe "Tabletastic#table_for" do
         output_buffer.should have_table_with_tag("tbody")
       end
     end
+
+    context "with options" do
+      it "should pass along html options" do
+        table_for([], :html => {:class => 'special'}) do |t|
+        end
+        output_buffer.should have_tag("table.special")
+      end
+    end
   end
 
   describe "#data" do
@@ -49,61 +57,94 @@ describe "Tabletastic#table_for" do
       @posts = [@post]
     end
 
-    context "with no other arguments" do
-      before do
-        table_for(@posts) do |t|
-          concat(t.data)
+    context "without a block" do
+      context "with no other arguments" do
+        before do
+          table_for(@posts) do |t|
+            concat(t.data)
+          end
+        end
+
+        it "should output table with id of the class of the collection" do
+          output_buffer.should have_tag("table#posts")
+        end
+
+        it "should output headers" do
+          output_buffer.should have_table_with_tag("thead")
+        end
+
+        it "should have a <th> for each attribute" do
+          # title and body
+          output_buffer.should have_table_with_tag("th", :count => 2)
+        end
+
+        it "should include header for Title" do
+          output_buffer.should have_table_with_tag("th", "Title")
+        end
+
+        it "should include header for Body" do
+          output_buffer.should have_table_with_tag("th", "Body")
+        end
+
+        it "should output body" do
+          output_buffer.should have_table_with_tag("tbody")
+        end
+
+        it "should include a row for each record" do
+          output_buffer.should have_table_with_tag("tbody") do |tbody|
+            tbody.should have_tag("tr", :count => 1)
+          end
+        end
+
+        it "should have data for each field" do
+          output_buffer.should have_table_with_tag("td", "The title of the post")
+          output_buffer.should have_table_with_tag("td", "Lorem ipsum")
+        end
+
+        it "should include the id for the <tr> for each record" do
+          output_buffer.should have_table_with_tag("tr#post_#{@post.id}")
+        end
+
+        it "should cycle row classes" do
+          @output_buffer = ""
+          @posts = [@post, @post]
+          table_for(@posts) do |t|
+            concat(t.data)
+          end
+          output_buffer.should have_table_with_tag("tr.odd")
+          output_buffer.should have_table_with_tag("tr.even")
         end
       end
 
-      it "should output headers" do
-        output_buffer.should have_table_with_tag("thead")
-      end
-
-      it "should have a <th> for each attribute" do
-        # title and body
-        output_buffer.should have_table_with_tag("th", :count => 2)
-      end
-
-      it "should include header for Title" do
-        output_buffer.should have_table_with_tag("th", "Title")
-      end
-
-      it "should include header for Body" do
-        output_buffer.should have_table_with_tag("th", "Body")
-      end
-
-      it "should output body" do
-        output_buffer.should have_table_with_tag("tbody")
-      end
-
-      it "should include a row for each record" do
-        output_buffer.should have_table_with_tag("tbody") do |tbody|
-          tbody.should have_tag("tr", :count => 1)
+      context "with a list of attributes" do
+        before do
+          table_for(@posts) do |t|
+            concat(t.data(:title, :created_at))
+          end
         end
-      end
 
-      it "should have data for each field" do
-        output_buffer.should have_table_with_tag("td", "The title of the post")
-        output_buffer.should have_table_with_tag("td", "Lorem ipsum")
-      end
-
-      it "should include the id for the <tr> for each record" do
-        output_buffer.should have_table_with_tag("tr#post_#{@post.id}")
+        it "should call each method passed in, and only those methods" do
+          output_buffer.should have_table_with_tag("th", "Title")
+          output_buffer.should have_table_with_tag("th", "Created at")
+          output_buffer.should_not have_table_with_tag("th", "Body")
+        end
       end
     end
 
-    context "with a list of attributes" do
+    context "with a block" do
       before do
         table_for(@posts) do |t|
-          concat(t.data(:title, :created_at))
+          t.data do
+            concat(t.cell(:title))
+            concat(t.cell(:body))
+          end
         end
       end
 
-      it "should call each method passed in, and only those methods" do
+      it "should include the data for the fields passed in" do
         output_buffer.should have_table_with_tag("th", "Title")
-        output_buffer.should have_table_with_tag("th", "Created at")
-        output_buffer.should_not have_table_with_tag("th", "Body")
+        output_buffer.should have_tag("td", "The title of the post")
+        output_buffer.should have_tag("td", "Lorem ipsum")
       end
     end
   end
