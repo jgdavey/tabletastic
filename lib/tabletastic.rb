@@ -53,7 +53,7 @@ module Tabletastic
 
     def body_rows
       @collection.inject("") do |rows, record|
-        rowclass = cycle("odd","even")
+        rowclass = @template.cycle("odd","even")
         rows += @template.content_tag_for(:tr, record, :class => rowclass) do
           tds_for_row(record)
         end
