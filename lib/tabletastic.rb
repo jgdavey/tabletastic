@@ -14,6 +14,7 @@ module Tabletastic
   end
 
   class TableBuilder
+    @@association_methods = %w[to_label display_name full_name name title username login value to_s]
 
     def initialize(collection, template)
       @collection, @template = collection, template
@@ -66,7 +67,14 @@ module Tabletastic
     end
 
     def cell_for(record, method_or_attribute)
-      record.send(method_or_attribute)
+      result = record.send(method_or_attribute)
+      return result if result.is_a?(String)
+      to_string = detect_string_method(result)
+      result.send(to_string) if to_string
+    end
+
+    def detect_string_method(association)
+      @@association_methods.detect { |method| association.respond_to?(method) }
     end
 
     def cell(method_or_attribute)
@@ -80,7 +88,13 @@ module Tabletastic
       if @collection.empty?
         @fields = []
       else
-        @fields = @collection.first.class.content_columns.map(&:name)
+        object = @collection.first
+        associations = object.class.reflect_on_all_associations(:belongs_to) if object.class.respond_to?(:reflect_on_all_associations)
+        @fields = object.class.content_columns.map(&:name)
+        if associations
+          associations = associations.map(&:name)
+          @fields += associations
+        end
         @fields -= %w[created_at updated_at created_on updated_on lock_version version]
         @fields.map!(&:to_sym)
       end
@@ -88,8 +102,8 @@ module Tabletastic
 
     private
 
-    def content_tag(name, content = nil, options = nil, escape = true, &block)
-      @template.content_tag(name, content, options, escape, &block)
-    end
+      def content_tag(name, content = nil, options = nil, escape = true, &block)
+        @template.content_tag(name, content, options, escape, &block)
+      end
   end
 end

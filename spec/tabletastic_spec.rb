@@ -114,6 +114,19 @@ describe "Tabletastic#table_for" do
           output_buffer.should have_table_with_tag("tr.odd")
           output_buffer.should have_table_with_tag("tr.even")
         end
+
+        context "when collection has associations" do
+          it "should handle belongs_to associations" do
+            ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([@mock_reflection_belongs_to_author])
+            @posts = [@freds_post]
+            @output_buffer = ""
+            table_for(@posts) do |t|
+              concat(t.data)
+            end
+            output_buffer.should have_table_with_tag("th", "Author")
+            output_buffer.should have_table_with_tag("td", "Fred Smith")
+          end
+        end
       end
 
       context "with a list of attributes" do
@@ -132,19 +145,44 @@ describe "Tabletastic#table_for" do
     end
 
     context "with a block" do
-      before do
-        table_for(@posts) do |t|
-          t.data do
-            concat(t.cell(:title))
-            concat(t.cell(:body))
+      context "and normal columns" do
+        before do
+          table_for(@posts) do |t|
+            t.data do
+              concat(t.cell(:title))
+              concat(t.cell(:body))
+            end
           end
+        end
+
+        it "should include the data for the fields passed in" do
+          output_buffer.should have_table_with_tag("th", "Title")
+          output_buffer.should have_tag("td", "The title of the post")
+          output_buffer.should have_tag("td", "Lorem ipsum")
         end
       end
 
-      it "should include the data for the fields passed in" do
-        output_buffer.should have_table_with_tag("th", "Title")
-        output_buffer.should have_tag("td", "The title of the post")
-        output_buffer.should have_tag("td", "Lorem ipsum")
+      context "and normal/association columns" do
+        before do
+          ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([@mock_reflection_belongs_to_author])
+          @posts = [@freds_post]
+          table_for(@posts) do |t|
+            t.data do
+              concat(t.cell(:title))
+              concat(t.cell(:author))
+            end
+          end
+        end
+
+        it "should include normal columns" do
+          output_buffer.should have_table_with_tag("th:nth-child(1)", "Title")
+          output_buffer.should have_table_with_tag("td:nth-child(1)", "Fred's Post")
+        end
+
+        it "should include belongs_to associations" do
+          output_buffer.should have_table_with_tag("th:nth-child(2)", "Author")
+          output_buffer.should have_table_with_tag("td:nth-child(2)", "Fred Smith")
+        end
       end
     end
   end

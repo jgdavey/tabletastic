@@ -59,13 +59,44 @@ module TabletasticSpecHelper
     def id
     end
   end
+  class ::Author
+  end
 
   def mock_everything
     # Sometimes we need a mock @post object and some Authors for belongs_to
     @post = mock('post')
     @post.stub!(:class).and_return(::Post)
     @post.stub!(:id).and_return(nil)
+    @post.stub!(:author)
     ::Post.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
     ::Post.stub!(:human_name).and_return('Post')
+
+    @fred = mock('user')
+    @fred.stub!(:class).and_return(::Author)
+    @fred.stub!(:name).and_return('Fred Smith')
+    @fred.stub!(:id).and_return(37)
+
+    ::Author.stub!(:find).and_return([@fred])
+    ::Author.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
+    ::Author.stub!(:human_name).and_return('Author')
+    ::Author.stub!(:reflect_on_association).and_return { |column_name| mock('reflection', :options => {}, :klass => Post, :macro => :has_many) if column_name == :posts }
+
+    @freds_post = mock('post')
+    @freds_post.stub!(:class).and_return(::Post)
+    @freds_post.stub!(:title).and_return('Fred\'s Post')
+    @freds_post.stub!(:body)
+    @freds_post.stub!(:id).and_return(19)
+    @freds_post.stub!(:author).and_return(@fred)
+    @freds_post.stub!(:author_id).and_return(@fred.id)
+    @fred.stub!(:posts).and_return([@freds_post])
+    @fred.stub!(:post_ids).and_return([@freds_post.id])
+
+    @mock_reflection_belongs_to_author = mock('reflection', :options => {}, :name => :author, :klass => ::Author, :macro => :belongs_to)
+
+    ::Post.stub!(:reflect_on_association).and_return do |column_name|
+      @mock_reflection_belongs_to_author if column_name == :author
+    end
+
+    ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([])
   end
 end
