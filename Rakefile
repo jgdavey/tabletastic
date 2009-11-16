@@ -14,13 +14,12 @@ begin
     s.email = "josh@joshuadavey.com"
     s.homepage = "http://github.com/jgdavey/tabletastic"
     s.authors = ["Joshua Davey"]
-
     s.require_path = 'lib'
-    s.autorequire = GEM
 
     s.add_development_dependency "rspec", ">= 1.2.9"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
