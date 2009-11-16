@@ -1,9 +1,42 @@
-= tabletastic
+= Tabletastic
 
-Description goes here.
+Inspired by the projects table_builder and formtastic,
+I realized how often I created tables for my active record collections.
+This is my attempt to simply this (the default scaffold):
+
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Body</th>
+        <th>Author Id</th>
+      </tr>
+      <% for post in @posts %>
+        <tr>
+          <td><%=h post.title %></td>
+          <td><%=h post.body %></td>
+          <td><%=h post.author_id %></td>
+          <td><%=h author.name %></td>
+          <td><%= link_to "Show", post %></td>
+          <td><%= link_to "Edit", edit_post_path(post) %></td>
+          <td><%= link_to "Destroy", post, :confirm => 'Are you sure?', :method => :delete %></td>
+          </tr>
+      <% end %>
+    </table>
+
+into this:
+
+    <% table_for(@posts) do |t| %>
+       <%= t.data :title, :body, :author %>
+    <% end %>
+
+
+== Warning
+THIS PROJECT IS UNDER HEAVY DEVELOPMENT.
+IT IS NOT RECOMMENDED FOR USE IN PRODUCTION APPLICATIONS
+
 
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
