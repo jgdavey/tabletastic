@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{tabletastic}
-  s.version = "0.0.1"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Davey"]
-  s.date = %q{2009-11-15}
+  s.date = %q{2009-11-17}
   s.description = %q{A table builder for active record collections   that produces semantically rich and accessible markup}
   s.email = %q{josh@joshuadavey.com}
   s.extra_rdoc_files = [
@@ -27,7 +27,8 @@ Gem::Specification.new do |s|
      "rails/init.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb",
-     "spec/tabletastic_spec.rb"
+     "spec/tabletastic_spec.rb",
+     "tabletastic.gemspec"
   ]
   s.homepage = %q{http://github.com/jgdavey/tabletastic}
   s.rdoc_options = ["--charset=UTF-8"]
