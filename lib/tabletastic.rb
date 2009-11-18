@@ -36,7 +36,7 @@ module Tabletastic
       end
     end
 
-    def cell(*args)
+    def cell(*args, &block)
       options = args.extract_options!
       @field_labels ||= []
       @fields ||= []
@@ -45,6 +45,8 @@ module Tabletastic
 
       if cell_html = options.delete(:cell_html)
         @fields << [method_or_attribute, cell_html]
+      elsif block_given?
+        @fields << block.to_proc
       else
         @fields << method_or_attribute
       end
@@ -99,9 +101,9 @@ module Tabletastic
       end
     end
 
-    def cell_data(record, method_or_attribute)
+    def cell_data(record, method_or_attribute_or_proc)
       # Get the attribute or association in question
-      result = record.send(method_or_attribute)
+      result = send_or_call(record, method_or_attribute_or_proc)
       # If we already have a string, just return it
       return result if result.is_a?(String)
 
@@ -139,6 +141,13 @@ module Tabletastic
       fields = fields.map(&:to_sym)
     end
 
+    def send_or_call(object, duck)
+      if duck.is_a?(Proc)
+        duck.call(object)
+      else
+        object.send(duck)
+      end
+    end
 
     def content_tag(name, content = nil, options = nil, escape = true, &block)
       @template.content_tag(name, content, options, escape, &block)

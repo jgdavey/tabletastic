@@ -182,6 +182,29 @@ describe "Tabletastic#table_for" do
         end
       end
 
+      context "with custom cell options" do
+        before do
+          table_for(@posts) do |t|
+            t.data do
+              concat(t.cell(:title) {|p| link_to p.title, "/" })
+              concat(t.cell(:body, :heading => "Content") {|p| p.body })
+            end
+          end
+        end
+
+        it "accepts a block as a lazy attribute" do
+          output_buffer.should have_table_with_tag("th:nth-child(1)", "Title")
+          output_buffer.should have_table_with_tag("td:nth-child(1)") do |td|
+            td.should have_tag("a", "The title of the post")
+          end
+        end
+
+        it "accepts a block as a lazy attribute (2)" do
+          output_buffer.should have_table_with_tag("th:nth-child(2)", "Content")
+          output_buffer.should have_table_with_tag("td:nth-child(2)", "Lorem ipsum")
+        end
+      end
+
       context "and normal/association columns" do
         before do
           ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([@mock_reflection_belongs_to_author])
