@@ -16,31 +16,50 @@ module Tabletastic
 
   class TableBuilder
     @@association_methods = %w[display_name full_name name title username login value to_s]
+    attr_accessor :field_labels
 
     def initialize(collection, template)
       @collection, @template = collection, template
     end
 
     # builds up the fields that the table will include,
-    # returns table headers and body with all data
+    # returns table head and body with all data
     def data(*args, &block)
       if block_given?
         yield self
-        @template.concat(headers)
+        @template.concat(head)
         @template.concat(body)
       else
         @fields = args unless args.empty?
-        [headers, body].join("")
+        @field_labels = fields.map { |f| f.to_s.humanize }
+        [head, body].join("")
       end
     end
 
-    def cell(method_or_attribute)
+    def cell(*args)
+      options = args.extract_options!
+      @field_labels ||= []
       @fields ||= []
-      @fields << method_or_attribute.to_sym
+
+      method_or_attribute = args.first.to_sym
+
+      if cell_html = options.delete(:cell_html)
+        @fields << [method_or_attribute, cell_html]
+      else
+        @fields << method_or_attribute
+      end
+
+      if heading = options.delete(:heading)
+        @field_labels << heading
+      else
+        @field_labels << method_or_attribute.to_s.humanize
+      end
+
       return "" # Since this will likely be called with <%= erb %>, this suppresses strange output
     end
 
-    def headers
+    def head
+      @field_labels ||= fields
       content_tag(:thead) do
         header_row
       end
@@ -48,8 +67,8 @@ module Tabletastic
 
     def header_row
       content_tag(:tr) do
-        fields.inject("") do |result,field|
-          result += content_tag(:th, field.to_s.humanize)
+        @field_labels.inject("") do |result,field|
+          result += content_tag(:th, field)
         end
       end
     end
@@ -70,8 +89,13 @@ module Tabletastic
     end
 
     def tds_for_row(record)
-      fields.inject("") do |cells, field|
-        cells += content_tag(:td, cell_data(record, field))
+      fields.inject("") do |cells, field_or_array|
+        field = field_or_array
+        if field_or_array.is_a?(Array)
+          field = field_or_array.first
+          html_options = field_or_array.last
+        end
+        cells += content_tag(:td, cell_data(record, field), html_options)
       end
     end
 

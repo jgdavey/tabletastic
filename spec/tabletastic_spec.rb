@@ -20,15 +20,15 @@ describe "Tabletastic#table_for" do
       output_buffer.should have_tag("table")
     end
 
-    context "headers and table body" do
+    context "head and table body" do
       before do
         table_for([]) do |t|
-          concat(t.headers)
+          concat(t.head)
           concat(t.body)
         end
       end
 
-      it "should build a basic table and headers" do
+      it "should build a basic table and head" do
         output_buffer.should have_table_with_tag("thead")
       end
 
@@ -69,7 +69,7 @@ describe "Tabletastic#table_for" do
           output_buffer.should have_tag("table#posts")
         end
 
-        it "should output headers" do
+        it "should output head" do
           output_buffer.should have_table_with_tag("thead")
         end
 
@@ -159,6 +159,26 @@ describe "Tabletastic#table_for" do
           output_buffer.should have_table_with_tag("th", "Title")
           output_buffer.should have_tag("td", "The title of the post")
           output_buffer.should have_tag("td", "Lorem ipsum")
+        end
+      end
+
+      context "with custom cell options" do
+        before do
+          table_for(@posts) do |t|
+            t.data do
+              concat(t.cell(:title, :heading => "FooBar"))
+              concat(t.cell(:body, :cell_html => {:class => "batquux"}))
+            end
+          end
+        end
+
+        it "should change the heading label for :heading option" do
+          output_buffer.should have_table_with_tag("th", "FooBar")
+          output_buffer.should have_table_with_tag("th", "Body")
+        end
+
+        it "should pass :cell_html to the cell" do
+          output_buffer.should have_table_with_tag("td.batquux")
         end
       end
 
