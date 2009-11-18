@@ -34,17 +34,151 @@ goodness that tabular data should have, i.e. a +<thead>+ and +<tbody>+ element.
 
 == Warning
 
-THIS PROJECT IS UNDER *HEAVY* DEVELOPMENT.
-IT IS *NOT RECOMMENDED* FOR USE IN PRODUCTION APPLICATIONS
+This project is still being actively developed. As such, future updates might not be backwards-compatible.
 
-
-== Usage
+== Installation
 
 In your Rails project, as a gem:
   config.gem "tabletastic", :source => "http://gemcutter.org"
 
 Or, for if you're behind the times, as a plugin:
   script/plugin install git://github.com/jgdavey/tabletastic.git
+
+
+== Usage
+
+By default, you can just use the table_for method to build up your table.
+Assuming you have a Post model with title and body, that belongs to an Author model with a name,
+you can just use the helper. It will try to detect all content fields and belongs to associations.
+
+In your view, simply calling:
+
+  <% table_for(@posts) do |t| %>
+    <%= t.data %>
+  <% end %>
+
+will produce html like this:
+
+  <table id="posts">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Body</th>
+        <th>Author</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="post odd" id="post_1">
+        <td>Something</td>
+        <td>Lorem ipsum dolor sit amet consequat. Duis aute irure dolor.</td>
+        <td>Jim Beam</td>
+      </tr>
+      <tr class="post even" id="post_2">
+        <td>Second Post</td>
+        <td>This is the second post</td>
+        <td>Jack Daniels</td>
+      </tr>
+      <tr class="post odd" id="post_3">
+        <td>Something else</td>
+        <td>Blah!</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+
+To limit the fields, change the order, or to include fields that are excluded by default (such as created_at),
+You can list methods to call on each resource:
+
+  <% table_for(@posts) do |t| %>
+    <%= t.data :author, :title, :created_at %>
+  <% end %>
+
+will produce html like:
+
+  <table id="posts">
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Title</th>
+        <th>Created at</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr id="post_1" class="post odd">
+        <td>Jim Beam</td>
+        <td>Something</td>
+        <td>2009-11-15 02:42:48 UTC</td>
+      </tr>
+      <tr id="post_2" class="post even">
+        <td>Jack Daniels</td>
+        <td>Second Post</td>
+        <td>2009-11-16 00:11:00 UTC</td>
+      </tr>
+      <tr id="post_3" class="post odd">
+        <td></td>
+        <td>Something else</td>
+        <td>2009-11-16 00:11:30 UTC</td>
+      </tr>
+    </tbody>
+  </table>
+
+For even greater flexibility, you can pass +data+ a block:
+
+  <% table_for(@posts) do |t| %>
+    <% t.data do %>
+      <%= t.cell(:title, :cell_html => {:class => "titlestring"}) %>
+      <%= t.cell(:body, :heading => "Content") {|p| truncate(p.body, 30)} %>
+      <%= t.cell(:author) {|p| p.author && link_to(p.author.name, p.author) } %>
+      <%= t.cell(:edit, :heading => '') {|p| link_to "Edit", edit_post_path(p) } %>
+    <% end -%>
+  <% end %>
+
+will product html like:
+
+  <table id="posts">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Content</th>
+        <th>Author</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="post odd" id="post_1">
+        <td class="titlestring">Something</td>
+        <td>Lorem ipsum dolor sit amet,...</td>
+        <td>
+          <a href="/authors/1">Jim Bean</a>
+        </td>
+        <td>
+          <a href="/posts/1/edit">Edit</a>
+        </td>
+      </tr>
+      <tr class="post even" id="post_2">
+        <td class="titlestring">Second Post</td>
+        <td>This is the second post</td>
+        <td>
+          <a href="/authors/2">Jack Daniels</a>
+        </td>
+        <td>
+          <a href="/posts/2/edit">Edit</a>
+        </td>
+      </tr>
+      <tr class="post odd" id="post_3">
+        <td class="titlestring">Something else</td>
+        <td>Blah!</td>
+        <td></td>
+        <td>
+          <a href="/posts/3/edit">Edit</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+If it _still_ isn't flexible enough for your needs, it might be time to return to static html/erb.
 
 == Note on Patches/Pull Requests
 
