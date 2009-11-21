@@ -2,29 +2,50 @@ module Tabletastic
 
   # returns and outputs a table for the given active record collection
   def table_for(collection, *args)
+    klass = default_class_for(collection)
     options = args.extract_options!
     options[:html] ||= {}
-    options[:html][:id] ||= get_id_for(collection)
+    options[:html][:id] ||= get_id_for(klass)
     concat(tag(:table, options[:html], true))
-    yield TableBuilder.new(collection, self)
+    yield TableBuilder.new(collection, klass, self)
     concat("</table>")
   end
 
-  def get_id_for(collection)
-    !collection.empty? && collection.first.class.to_s.tableize
+  private
+  # Finds the class representing the objects within the collection
+  def default_class_for(collection)
+    if collection.respond_to?(:proxy_reflection)
+      collection.proxy_reflection.klass
+    elsif !collection.empty?
+      collection.first.class
+    end
+  end
+
+  def get_id_for(klass)
+    klass.to_s.tableize
   end
 
   class TableBuilder
     @@association_methods = %w[display_name full_name name title username login value to_s]
     attr_accessor :field_labels
+    attr_reader   :collection, :klass
 
-    def initialize(collection, template)
-      @collection, @template = collection, template
+    def initialize(collection, klass, template)
+      @collection, @klass, @template = collection, klass, template
     end
 
     # builds up the fields that the table will include,
     # returns table head and body with all data
-    def data(*args, &block)
+    #
+    # Can be used one of three ways:
+    #
+    #   * Alone, which will try to detect all content columns on the resource
+    #   * With an array of methods to call on each element in the collection
+    #   * With a block, which assumes you will use +cell+ method to build up
+    #     the table
+    #
+    #
+    def data(*args, &block) # :yields: the TableBuilder instance
       if block_given?
         yield self
         @template.concat(head)
@@ -36,6 +57,27 @@ module Tabletastic
       end
     end
 
+    # individually specify a column, which will build up the header,
+    # and method or block to call on each resource in the array
+    #
+    # Should always be called within the block of +data+
+    #
+    # For example:
+    #
+    #   t.cell :blah
+    #
+    # will simply call +blah+ on each resource
+    #
+    # You can also provide a block, which allows for other helpers
+    # or custom formatting. Since by default erb will just call +to_s+
+    # on an any element output, you can more greatly control the output:
+    #
+    #   t.cell(:price) {|resource| number_to_currency(resource)}
+    #
+    # would output something like:
+    #
+    #   <td>$1.50</td>
+    #
     def cell(*args, &block)
       options = args.extract_options!
       @field_labels ||= []
@@ -56,8 +98,9 @@ module Tabletastic
       else
         @field_labels << method_or_attribute.to_s.humanize
       end
-
-      return "" # Since this will likely be called with <%= erb %>, this suppresses strange output
+      # Since this will likely be called with <%= %> (aka 'concat'), explicitly return an empty string
+      # This suppresses unwanted output
+      return ""
     end
 
     def head
@@ -85,12 +128,12 @@ module Tabletastic
       @collection.inject("") do |rows, record|
         rowclass = @template.cycle("odd","even")
         rows += @template.content_tag_for(:tr, record, :class => rowclass) do
-          tds_for_row(record)
+          cells_for_row(record)
         end
       end
     end
 
-    def tds_for_row(record)
+    def cells_for_row(record)
       fields.inject("") do |cells, field_or_array|
         field = field_or_array
         if field_or_array.is_a?(Array)
@@ -115,7 +158,7 @@ module Tabletastic
 
     def fields
       return @fields if defined?(@fields)
-      @fields = @collection.empty? ? [] : active_record_fields_for_object(@collection.first)
+      @fields = @collection.empty? ? [] : active_record_fields
     end
 
     protected
@@ -125,13 +168,14 @@ module Tabletastic
     end
 
 
-    def active_record_fields_for_object(obj)
+    def active_record_fields
+      return [] if klass.blank?
       # normal content columns
-      fields = obj.class.content_columns.map(&:name)
+      fields = klass.content_columns.map(&:name)
 
       # active record associations
-      associations = obj.class.reflect_on_all_associations(:belongs_to) if obj.class.respond_to?(:reflect_on_all_associations)
-      if associations
+      if klass.respond_to?(:reflect_on_all_associations)
+        associations = klass.reflect_on_all_associations(:belongs_to)
         associations = associations.map(&:name)
         fields += associations
       end
@@ -141,16 +185,18 @@ module Tabletastic
       fields = fields.map(&:to_sym)
     end
 
+    def content_tag(name, content = nil, options = nil, escape = true, &block)
+      @template.content_tag(name, content, options, escape, &block)
+    end
+
+    private
+
     def send_or_call(object, duck)
-      if duck.is_a?(Proc)
+      if duck.respond_to?(:call)
         duck.call(object)
       else
         object.send(duck)
       end
-    end
-
-    def content_tag(name, content = nil, options = nil, escape = true, &block)
-      @template.content_tag(name, content, options, escape, &block)
     end
   end
 end

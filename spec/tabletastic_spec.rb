@@ -236,7 +236,7 @@ describe TableBuilder do
     mock_everything
     ::Post.stub!(:content_columns).and_return([mock('column', :name => 'title'), mock('column', :name => 'body'), mock('column', :name => 'created_at')])
     @posts = [@post, Post.new]
-    @builder = TableBuilder.new(@posts, nil)
+    @builder = TableBuilder.new(@posts, ::Post, nil)
   end
 
   it "should detect attributes" do
