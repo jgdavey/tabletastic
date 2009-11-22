@@ -39,20 +39,23 @@ module Tabletastic
     #
     # Can be used one of three ways:
     #
-    #   * Alone, which will try to detect all content columns on the resource
-    #   * With an array of methods to call on each element in the collection
-    #   * With a block, which assumes you will use +cell+ method to build up
-    #     the table
+    # * Alone, which will try to detect all content columns on the resource
+    # * With an array of methods to call on each element in the collection
+    # * With a block, which assumes you will use +cell+ method to build up
+    #   the table
     #
     #
-    def data(*args, &block) # :yields: the TableBuilder instance
+    def data(*args, &block) # :yields: tablebody
+      options = args.extract_options!
       if block_given?
         yield self
+        action_cells(options[:actions])
         @template.concat(head)
         @template.concat(body)
       else
-        @fields = args unless args.empty?
+        @fields = args.empty? ? fields : args
         @field_labels = fields.map { |f| f.to_s.humanize }
+        action_cells(options[:actions])
         [head, body].join("")
       end
     end
@@ -85,12 +88,16 @@ module Tabletastic
 
       method_or_attribute = args.first.to_sym
 
-      if cell_html = options.delete(:cell_html)
-        @fields << [method_or_attribute, cell_html]
-      elsif block_given?
-        @fields << block.to_proc
+      method_or_attribute_or_proc = if block_given?
+        block.to_proc
       else
-        @fields << method_or_attribute
+        method_or_attribute
+      end
+
+      if cell_html = options.delete(:cell_html)
+        @fields << [method_or_attribute_or_proc, cell_html]
+      else
+        @fields << method_or_attribute_or_proc
       end
 
       if heading = options.delete(:heading)
@@ -154,6 +161,31 @@ module Tabletastic
       # Try to detect which method to use for stringifying the attribute
       to_string = detect_string_method(result)
       result.send(to_string) if to_string
+    end
+
+    # Used internally to build up cells for common CRUD actions
+    def action_cells(actions)
+      return if actions.blank?
+      actions = [actions] if !actions.respond_to?(:each)
+      actions = [:show, :edit, :destroy] if actions == [:all]
+      actions.each do |action|
+        action_link(action.to_sym)
+      end
+    end
+
+    # Dynamically builds links for the action
+    def action_link(action)
+      html_class = "actions #{action.to_s}_link"
+      self.cell(action, :heading => "", :cell_html => {:class => html_class}) do |resource|
+        case action
+        when :show
+          @template.link_to("Show", resource)
+        when :edit
+          @template.link_to("Edit", @template.polymorphic_path(resource, :action => :edit))
+        when :destroy
+          @template.link_to("Destroy", resource, :method => :delete)
+        end
+      end
     end
 
     def fields

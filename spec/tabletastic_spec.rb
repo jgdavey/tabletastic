@@ -129,6 +129,57 @@ describe "Tabletastic#table_for" do
         end
       end
 
+      context "with options[:actions]" do
+        it "includes path to post for :show" do
+          table_for(@posts) do |t|
+            concat(t.data(:actions => :show))
+          end
+          output_buffer.should have_table_with_tag("a[@href=/posts/#{@post.id}]")
+          output_buffer.should have_table_with_tag("th", "")
+        end
+
+        it "should have a cell with default class 'actions' and the action name" do
+          table_for(@posts) do |t|
+            concat(t.data(:actions => :show))
+          end
+          output_buffer.should have_tag("td.actions.show_link") do |td|
+            td.should have_tag("a")
+          end
+        end
+
+        it "includes path to post for :edit" do
+          table_for(@posts) do |t|
+            concat(t.data(:actions => :edit))
+          end
+          output_buffer.should have_tag("a[@href=/posts/#{@post.id}/edit]", "Edit")
+        end
+
+        it "includes path to post for :destroy" do
+          table_for(@posts) do |t|
+            concat(t.data(:actions => :destroy))
+          end
+          output_buffer.should have_table_with_tag("a[@href=/posts/#{@post.id}]", "Destroy")
+          output_buffer.should have_table_with_tag("th", "")
+        end
+
+        it "includes path to post for :show and :edit" do
+          table_for(@posts) do |t|
+            concat(t.data(:actions => [:show, :edit]))
+          end
+          output_buffer.should have_tag("td:nth-child(3) a[@href=/posts/#{@post.id}]", "Show")
+          output_buffer.should have_tag("td:nth-child(4) a[@href=/posts/#{@post.id}/edit]", "Edit")
+        end
+
+        it "includes path to post for :all" do
+          table_for(@posts) do |t|
+            concat(t.data(:actions => :all))
+          end
+          output_buffer.should have_tag("td:nth-child(3) a[@href=/posts/#{@post.id}]", "Show")
+          output_buffer.should have_tag("td:nth-child(4) a[@href=/posts/#{@post.id}/edit]", "Edit")
+          output_buffer.should have_tag("td:nth-child(5) a[@href=/posts/#{@post.id}]", "Destroy")
+        end
+      end
+
       context "with a list of attributes" do
         before do
           table_for(@posts) do |t|
@@ -140,6 +191,20 @@ describe "Tabletastic#table_for" do
           output_buffer.should have_table_with_tag("th", "Title")
           output_buffer.should have_table_with_tag("th", "Created at")
           output_buffer.should_not have_table_with_tag("th", "Body")
+        end
+      end
+
+      context "with a list of attributes and options[:actions]" do
+        it "includes path to post for :show" do
+          table_for(@posts) do |t|
+            concat(t.data(:title, :created_at, :actions => :show))
+          end
+          output_buffer.should have_tag("th:nth-child(1)", "Title")
+          output_buffer.should have_tag("th:nth-child(2)", "Created at")
+          output_buffer.should have_tag("th:nth-child(3)", "")
+          output_buffer.should_not have_tag("th", "Body")
+
+          output_buffer.should have_tag("td:nth-child(3) a[@href=/posts/#{@post.id}]")
         end
       end
     end
@@ -202,6 +267,18 @@ describe "Tabletastic#table_for" do
         it "accepts a block as a lazy attribute (2)" do
           output_buffer.should have_table_with_tag("th:nth-child(2)", "Content")
           output_buffer.should have_table_with_tag("td:nth-child(2)", "Lorem ipsum")
+        end
+      end
+
+      context "with options[:actions]" do
+        it "includes path to post for :show" do
+          table_for(@posts) do |t|
+            t.data(:actions => :show) do
+              concat(t.cell(:title))
+              concat(t.cell(:body))
+            end
+          end
+          output_buffer.should have_table_with_tag("td:nth-child(3) a[@href=/posts/#{@post.id}]")
         end
       end
 
