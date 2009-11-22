@@ -126,11 +126,10 @@ will produce html like:
 For even greater flexibility, you can pass +data+ a block:
 
   <% table_for(@posts) do |t| %>
-    <% t.data do %>
+    <% t.data :actions => :all do %>
       <%= t.cell(:title, :cell_html => {:class => "titlestring"}) %>
       <%= t.cell(:body, :heading => "Content") {|p| truncate(p.body, 30)} %>
       <%= t.cell(:author) {|p| p.author && link_to(p.author.name, p.author) } %>
-      <%= t.cell(:edit, :heading => '') {|p| link_to "Edit", edit_post_path(p) } %>
     <% end -%>
   <% end %>
 
@@ -143,6 +142,8 @@ will product html like:
         <th>Content</th>
         <th>Author</th>
         <th></th>
+        <th></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -152,8 +153,14 @@ will product html like:
         <td>
           <a href="/authors/1">Jim Bean</a>
         </td>
-        <td>
+        <td class="actions show_link">
+          <a href="/posts/1">Show</a>
+        </td>
+        <td class="actions edit_link">
           <a href="/posts/1/edit">Edit</a>
+        </td>
+        <td class="actions destroy_link">
+          <a href="/posts/1/edit">Destroy</a> <!-- inline javascript omitted -->
         </td>
       </tr>
       <tr class="post even" id="post_2">
@@ -162,16 +169,28 @@ will product html like:
         <td>
           <a href="/authors/2">Jack Daniels</a>
         </td>
-        <td>
+        <td class="actions show_link">
+          <a href="/posts/2">Show</a>
+        </td>
+        <td class="actions edit_link">
           <a href="/posts/2/edit">Edit</a>
+        </td>
+        <td class="actions destroy_link">
+          <a href="/posts/2/edit">Destroy</a> <!-- inline javascript omitted -->
         </td>
       </tr>
       <tr class="post odd" id="post_3">
         <td class="titlestring">Something else</td>
         <td>Blah!</td>
         <td></td>
-        <td>
+        <td class="actions show_link">
+          <a href="/posts/3">Show</a>
+        </td>
+        <td class="actions edit_link">
           <a href="/posts/3/edit">Edit</a>
+        </td>
+        <td class="actions destroy_link">
+          <a href="/posts/3/edit">Destroy</a> <!-- inline javascript omitted -->
         </td>
       </tr>
     </tbody>
