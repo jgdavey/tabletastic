@@ -49,13 +49,13 @@ module Tabletastic
       options = args.extract_options!
       if block_given?
         yield self
-        action_cells(options[:actions])
+        action_cells(options[:actions], options[:action_prefix])
         @template.concat(head)
         @template.concat(body)
       else
         @fields = args.empty? ? fields : args
         @field_labels = fields.map { |f| f.to_s.humanize }
-        action_cells(options[:actions])
+        action_cells(options[:actions], options[:action_prefix])
         [head, body].join("")
       end
     end
@@ -164,26 +164,27 @@ module Tabletastic
     end
 
     # Used internally to build up cells for common CRUD actions
-    def action_cells(actions)
+    def action_cells(actions, prefix = nil)
       return if actions.blank?
       actions = [actions] if !actions.respond_to?(:each)
       actions = [:show, :edit, :destroy] if actions == [:all]
       actions.each do |action|
-        action_link(action.to_sym)
+        action_link(action.to_sym, prefix)
       end
     end
 
     # Dynamically builds links for the action
-    def action_link(action)
+    def action_link(action, prefix)
       html_class = "actions #{action.to_s}_link"
       self.cell(action, :heading => "", :cell_html => {:class => html_class}) do |resource|
+        compound_resource = [prefix, resource].compact
         case action
         when :show
-          @template.link_to("Show", resource)
+          @template.link_to("Show", compound_resource)
         when :edit
-          @template.link_to("Edit", @template.polymorphic_path(resource, :action => :edit))
+          @template.link_to("Edit", @template.polymorphic_path(compound_resource, :action => :edit))
         when :destroy
-          @template.link_to("Destroy", resource, :method => :delete)
+          @template.link_to("Destroy", compound_resource, :method => :delete)
         end
       end
     end

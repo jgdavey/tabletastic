@@ -178,6 +178,38 @@ describe "Tabletastic#table_for" do
           output_buffer.should have_tag("td:nth-child(4) a[@href=/posts/#{@post.id}/edit]", "Edit")
           output_buffer.should have_tag("td:nth-child(5) a[@href=/posts/#{@post.id}]", "Destroy")
         end
+
+        context "with options[:actions_prefix]" do
+          it "includes path to admin post for :show" do
+            table_for(@posts) do |t|
+              concat(t.data(:actions => :show, :action_prefix => :admin))
+            end
+            output_buffer.should have_tag("td:nth-child(3) a[@href=/admin/posts/#{@post.id}]", "Show")
+          end
+
+          it "includes path to admin post for :edit" do
+            table_for(@posts) do |t|
+              concat(t.data(:actions => :edit, :action_prefix => :admin))
+            end
+            output_buffer.should have_tag("td:nth-child(3) a[@href=/admin/posts/#{@post.id}/edit]", "Edit")
+          end
+
+          it "includes path to admin post for :destroy" do
+            table_for(@posts) do |t|
+              concat(t.data(:actions => :destroy, :action_prefix => :admin))
+            end
+            output_buffer.should have_tag("td:nth-child(3) a[@href=/admin/posts/#{@post.id}]", "Destroy")
+          end
+
+          it "includes path to admin for all actions" do
+            table_for(@posts) do |t|
+              concat(t.data(:actions => :all, :action_prefix => :admin))
+            end
+            output_buffer.should have_tag("td:nth-child(3) a[@href=/admin/posts/#{@post.id}]", "Show")
+            output_buffer.should have_tag("td:nth-child(4) a[@href=/admin/posts/#{@post.id}/edit]", "Edit")
+            output_buffer.should have_tag("td:nth-child(5) a[@href=/admin/posts/#{@post.id}]", "Destroy")
+          end
+        end
       end
 
       context "with a list of attributes" do

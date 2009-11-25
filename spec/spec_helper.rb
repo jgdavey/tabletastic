@@ -64,7 +64,9 @@ module TabletasticSpecHelper
 
   def mock_everything
     def post_path(post); "/posts/#{post.id}"; end
+    def admin_post_path(post); "/admin/posts/#{post.id}"; end
     def edit_post_path(post); "/posts/#{post.id}/edit"; end
+    def edit_admin_post_path(post); "/admin/posts/#{post.id}/edit"; end
 
     # Sometimes we need a mock @post object and some Authors for belongs_to
     @post = mock('post')
