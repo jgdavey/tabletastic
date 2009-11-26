@@ -1,0 +1,17 @@
+v0.1.2 (Nov 25, 2009)
+
+* Added ability to namespace :actions links (i.e. /admin/posts/1)
+
+v0.1.1 (Nov 22, 2009)
+
+* Added :actions option to data method for common show, edit, destroy links
+
+v0.1.0 (Nov 17, 2009)
+
+* First useful release
+* Added documentation
+* "Lazy" attributes can be supplied as blocks to cell method
+
+v0.0.1 (Nov 15, 2009)
+
+* Beta release, proof-of-concept

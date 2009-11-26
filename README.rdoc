@@ -2,7 +2,7 @@
 
 Inspired by the projects table_builder and formtastic,
 I realized how often I created tables for my active record collections.
-This is my attempt to simply this (the default scaffold):
+This is my attempt to simplify this (the default scaffold):
 
   <table>
     <tr>
@@ -25,16 +25,12 @@ This is my attempt to simply this (the default scaffold):
 into this:
 
   <% table_for(@posts) do |t| %>
-    <%= t.data :title, :body, :author %>
+    <%= t.data :actions => :all %>
   <% end %>
 
 and still output the same effective results, but with all the semantic
-goodness that tabular data should have, i.e. a +<thead>+ and +<tbody>+ element.
+goodness that tabular data should have, i.e. a +thead+ and +tbody+ element.
 
-
-== Warning
-
-This project is still being actively developed. As such, future updates might not be backwards-compatible.
 
 == Installation
 
