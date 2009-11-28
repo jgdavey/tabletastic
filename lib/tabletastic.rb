@@ -27,6 +27,8 @@ module Tabletastic
 
   class TableBuilder
     @@association_methods = %w[display_name full_name name title username login value to_s]
+    @@default_hidden_columns = %w[created_at updated_at created_on updated_on lock_version version]
+
     attr_accessor :field_labels
     attr_reader   :collection, :klass
 
@@ -205,26 +207,22 @@ module Tabletastic
 
     def active_record_fields
       return [] if klass.blank?
-      # normal content columns
       fields = klass.content_columns.map(&:name)
-
-      # active record associations
-      if klass.respond_to?(:reflect_on_all_associations)
-        associations = klass.reflect_on_all_associations(:belongs_to)
-        associations = associations.map(&:name)
-        fields += associations
-      end
-
-      # remove utility columns by default
-      fields -= %w[created_at updated_at created_on updated_on lock_version version]
+      fields += active_record_association_reflections
+      fields -= @@default_hidden_columns
       fields = fields.map(&:to_sym)
     end
+
+    def active_record_association_reflections
+      return [] unless klass.respond_to?(:reflect_on_all_associations)
+      associations = klass.reflect_on_all_associations(:belongs_to).map(&:name)
+    end
+
+    private
 
     def content_tag(name, content = nil, options = nil, escape = true, &block)
       @template.content_tag(name, content, options, escape, &block)
     end
-
-    private
 
     def send_or_call(object, duck)
       if duck.respond_to?(:call)
