@@ -158,9 +158,20 @@ describe "Tabletastic#table_for" do
           table_for(@posts) do |t|
             concat(t.data(:actions => :destroy))
           end
-          output_buffer.should have_table_with_tag("a[@href=/posts/#{@post.id}]", "Destroy")
+          output_buffer.should have_table_with_tag("a[@href=/posts/#{@post.id}]")
           output_buffer.should have_table_with_tag("th", "")
         end
+
+
+        it "includes path to post for :destroy_with_confirm" do
+          table_for(@posts) do |t|
+            concat(t.data(:actions => :destroy_with_confirm))
+          end
+          output_buffer.should have_table_with_tag("a[@href=/posts/#{@post.id}]", "Destroy")
+          output_buffer.should have_table_with_tag("a[@onclick^=if (confirm('Are you sure?'))]", "Destroy")
+          output_buffer.should have_table_with_tag("th", "")
+        end
+
 
         it "includes path to post for :show and :edit" do
           table_for(@posts) do |t|

@@ -1,3 +1,6 @@
+* Added special action "destroy_with_confirm",
+  although it is still recommended to use javascript to achieve this.
+
 v0.1.2 (Nov 25, 2009)
 
 * Added ability to namespace :actions links (i.e. /admin/posts/1)

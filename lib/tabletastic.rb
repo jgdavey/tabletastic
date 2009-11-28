@@ -185,6 +185,8 @@ module Tabletastic
           @template.link_to("Edit", @template.polymorphic_path(compound_resource, :action => :edit))
         when :destroy
           @template.link_to("Destroy", compound_resource, :method => :delete)
+        when :destroy_with_confirm
+          @template.link_to("Destroy", compound_resource, :method => :delete, :confirm => "Are you sure?")
         end
       end
     end
