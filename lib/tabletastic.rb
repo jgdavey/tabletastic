@@ -115,29 +115,21 @@ module Tabletastic
     def head
       @field_labels ||= fields
       content_tag(:thead) do
-        header_row
-      end
-    end
-
-    def header_row
-      content_tag(:tr) do
-        @field_labels.inject("") do |result,field|
-          result += content_tag(:th, field)
+        content_tag(:tr) do
+          @field_labels.inject("") do |result,field|
+            result += content_tag(:th, field)
+          end
         end
       end
     end
 
     def body
       content_tag(:tbody) do
-        body_rows
-      end
-    end
-
-    def body_rows
-      @collection.inject("") do |rows, record|
-        rowclass = @template.cycle("odd","even")
-        rows += @template.content_tag_for(:tr, record, :class => rowclass) do
-          cells_for_row(record)
+        @collection.inject("") do |rows, record|
+          rowclass = @template.cycle("odd","even")
+          rows += @template.content_tag_for(:tr, record, :class => rowclass) do
+            cells_for_row(record)
+          end
         end
       end
     end
@@ -183,12 +175,12 @@ module Tabletastic
         case action
         when :show
           @template.link_to("Show", compound_resource)
-        when :edit
-          @template.link_to("Edit", @template.polymorphic_path(compound_resource, :action => :edit))
         when :destroy
           @template.link_to("Destroy", compound_resource, :method => :delete)
         when :destroy_with_confirm
           @template.link_to("Destroy", compound_resource, :method => :delete, :confirm => "Are you sure?")
+        else # edit, other resource GET actions
+          @template.link_to(action.to_s.titleize, @template.polymorphic_path(compound_resource, :action => action))
         end
       end
     end
