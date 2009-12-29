@@ -28,6 +28,7 @@ module Tabletastic
   class TableBuilder
     @@association_methods = %w[display_name full_name name title username login value to_s]
     @@default_hidden_columns = %w[created_at updated_at created_on updated_on lock_version version]
+    @@destroy_confirm_message = "Are you sure?"
 
     attr_accessor :field_labels
     attr_reader   :collection, :klass, :fields
@@ -161,9 +162,7 @@ module Tabletastic
         when :show
           @template.link_to("Show", compound_resource)
         when :destroy
-          @template.link_to("Destroy", compound_resource, :method => :delete)
-        when :destroy_with_confirm
-          @template.link_to("Destroy", compound_resource, :method => :delete, :confirm => "Are you sure?")
+          @template.link_to("Destroy", compound_resource, :method => :delete, :confirm => @@destroy_confirm_message)
         else # edit, other resource GET actions
           @template.link_to(action.to_s.titleize, @template.polymorphic_path(compound_resource, :action => action))
         end
