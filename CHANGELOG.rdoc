@@ -1,5 +1,5 @@
-* Added special action "destroy_with_confirm",
-  although it is still recommended to use javascript to achieve this.
+v0.1.3 (Dec 28, 2009)
+* Changing destroy action to have confirmation by default
 
 v0.1.2 (Nov 25, 2009)
 
