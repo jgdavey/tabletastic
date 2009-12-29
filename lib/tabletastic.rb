@@ -30,10 +30,11 @@ module Tabletastic
     @@default_hidden_columns = %w[created_at updated_at created_on updated_on lock_version version]
 
     attr_accessor :field_labels
-    attr_reader   :collection, :klass
+    attr_reader   :collection, :klass, :fields
 
     def initialize(collection, klass, template)
       @collection, @klass, @template = collection, klass, template
+      @field_labels = []
     end
 
     # builds up the fields that the table will include,
@@ -50,12 +51,13 @@ module Tabletastic
     def data(*args, &block) # :yields: tablebody
       options = args.extract_options!
       if block_given?
+        @fields = []
         yield self
         action_cells(options[:actions], options[:action_prefix])
         @template.concat(head)
         @template.concat(body)
       else
-        @fields = args.empty? ? fields : args
+        @fields = args.empty? ? active_record_fields : args
         @field_labels = fields.map { |f| f.to_s.humanize }
         action_cells(options[:actions], options[:action_prefix])
         [head, body].join("")
@@ -83,40 +85,23 @@ module Tabletastic
     #
     #   <td>$1.50</td>
     #
-    def cell(*args, &block)
+    def cell(*args, &proc)
       options = args.extract_options!
-      @field_labels ||= []
-      @fields ||= []
+      method = args.first.to_sym
+      method_or_proc = block_given? ? proc : method
 
-      method_or_attribute = args.first.to_sym
+      @fields << [method_or_proc, options.delete(:cell_html)]
 
-      method_or_attribute_or_proc = if block_given?
-        block.to_proc
-      else
-        method_or_attribute
-      end
-
-      if cell_html = options.delete(:cell_html)
-        @fields << [method_or_attribute_or_proc, cell_html]
-      else
-        @fields << method_or_attribute_or_proc
-      end
-
-      if heading = options.delete(:heading)
-        @field_labels << heading
-      else
-        @field_labels << method_or_attribute.to_s.humanize
-      end
+      @field_labels << (options.delete(:heading) || method.to_s.humanize)
       # Since this will likely be called with <%= %> (aka 'concat'), explicitly return an empty string
       # This suppresses unwanted output
       return ""
     end
 
     def head
-      @field_labels ||= fields
       content_tag(:thead) do
         content_tag(:tr) do
-          @field_labels.inject("") do |result,field|
+          self.field_labels.inject("") do |result,field|
             result += content_tag(:th, field)
           end
         end
@@ -183,11 +168,6 @@ module Tabletastic
           @template.link_to(action.to_s.titleize, @template.polymorphic_path(compound_resource, :action => action))
         end
       end
-    end
-
-    def fields
-      return @fields if defined?(@fields)
-      @fields = @collection.empty? ? [] : active_record_fields
     end
 
     protected
