@@ -8,7 +8,7 @@ module Tabletastic
     options[:html][:id] ||= get_id_for(klass)
     concat(tag(:table, options[:html], true))
     yield TableBuilder.new(collection, klass, self)
-    concat("</table>")
+    concat("</table>".html_safe)
   end
 
   private
@@ -55,13 +55,13 @@ module Tabletastic
         @fields = []
         yield self
         action_cells(options[:actions], options[:action_prefix])
-        @template.concat(head)
-        @template.concat(body)
+        @template.concat(head.html_safe)
+        @template.concat(body.html_safe)
       else
         @fields = args.empty? ? active_record_fields : args
         @field_labels = fields.map { |f| f.to_s.humanize }
         action_cells(options[:actions], options[:action_prefix])
-        [head, body].join("")
+        [head, body].join("").html_safe
       end
     end
 

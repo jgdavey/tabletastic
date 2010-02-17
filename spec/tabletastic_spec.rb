@@ -6,7 +6,7 @@ include Tabletastic
 describe "Tabletastic#table_for" do
 
   before do
-    @output_buffer = ''
+    @output_buffer = ActiveSupport::SafeBuffer.new
   end
 
   describe "basics" do

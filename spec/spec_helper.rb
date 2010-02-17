@@ -44,9 +44,6 @@ module TabletasticSpecHelper
   def self.included(base)
     base.class_eval do
       attr_accessor :output_buffer
-      def protect_against_forgery?
-        false
-      end
     end
   end
 
