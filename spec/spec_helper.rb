@@ -1,7 +1,8 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rubygems'
 
-def smart_require(lib_name, gem_name, gem_version = '>= 0.0.0')
+def smart_require(gem_name, gem_version = '>= 0.0.0', lib_name = nil)
+  lib_name ||= gem_name
   begin
     require lib_name if lib_name
   rescue LoadError
@@ -12,17 +13,18 @@ def smart_require(lib_name, gem_name, gem_version = '>= 0.0.0')
   end
 end
 
-smart_require 'spec', 'spec', '>= 1.2.8'
+smart_require 'rspec', '>= 1.2.9', 'spec'
 require 'spec/autorun'
-smart_require false, 'rspec-rails', '>= 1.2.7.1'
-smart_require 'hpricot', 'hpricot', '>= 0.6.1'
-smart_require 'rspec_hpricot_matchers', 'rspec_hpricot_matchers', '>= 1.0.0'
-smart_require 'active_support', 'activesupport', '>= 2.3.4'
-smart_require 'action_controller', 'actionpack', '>= 2.3.4'
-smart_require 'action_view', 'actionpack', '>= 2.3.4'
+smart_require 'nokogiri'
+smart_require 'rspec_tag_matchers', '>= 1.0.0'
+smart_require 'activesupport', '>= 3.0.0.beta', 'active_support'
+smart_require 'actionpack', '>= 3.0.0.beta', 'action_pack'
+smart_require 'actioncontroller', '>= 3.0.0.beta', 'action_controller'
+smart_require 'actionview', '>= 3.0.0.beta', 'action_view'
+smart_require 'activerecord', '>= 3.0.0.beta', 'active_record'
 
 Spec::Runner.configure do |config|
-  config.include(RspecHpricotMatchers)
+  config.include(RspecTagMatchers)
 end
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
@@ -32,7 +34,7 @@ module TabletasticSpecHelper
   include ActionView::Helpers::UrlHelper
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::TextHelper
-  include ActionView::Helpers::ActiveRecordHelper
+  include ActionView::Helpers::ActiveModelHelper
   include ActionView::Helpers::RecordIdentificationHelper
   include ActionView::Helpers::RecordTagHelper
   include ActionView::Helpers::CaptureHelper
@@ -48,7 +50,7 @@ module TabletasticSpecHelper
     end
   end
 
-  module ::RspecHpricotMatchers
+  module ::RspecTagMatchers
     def have_table_with_tag(selector, inner_text_or_options = nil, options = {}, &block)
       HaveTag.new("table", nil, {}) &&
         HaveTag.new(selector, inner_text_or_options, options, &block)
@@ -74,7 +76,7 @@ module TabletasticSpecHelper
     @post.stub!(:id).and_return(nil)
     @post.stub!(:author)
     ::Post.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
-    ::Post.stub!(:human_name).and_return('Post')
+    ::Post.stub!(:model_name).and_return(ActiveModel::Name.new(::Post))
 
     @fred = mock('user')
     @fred.stub!(:class).and_return(::Author)
@@ -84,6 +86,7 @@ module TabletasticSpecHelper
     ::Author.stub!(:find).and_return([@fred])
     ::Author.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
     ::Author.stub!(:human_name).and_return('Author')
+    ::Author.stub!(:model_name).and_return(ActiveModel::Name.new(::Author))
     ::Author.stub!(:reflect_on_association).and_return { |column_name| mock('reflection', :options => {}, :klass => Post, :macro => :has_many) if column_name == :posts }
 
     @freds_post = mock('post')

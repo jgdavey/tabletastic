@@ -93,7 +93,7 @@ module Tabletastic
 
       @fields << [method_or_proc, options.delete(:cell_html)]
 
-      @field_labels << (options.delete(:heading) || method.to_s.humanize)
+      @field_labels << (options.delete(:heading) || method.to_s.humanize).html_safe
       # Since this will likely be called with <%= %> (aka 'concat'), explicitly return an empty string
       # This suppresses unwanted output
       return ""

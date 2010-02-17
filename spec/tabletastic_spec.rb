@@ -134,7 +134,7 @@ describe "Tabletastic#table_for" do
           table_for(@posts) do |t|
             concat(t.data(:actions => :show))
           end
-          output_buffer.should have_table_with_tag("a[@href=/posts/#{@post.id}]")
+          output_buffer.should have_table_with_tag("a[@href=\"/posts/#{@post.id}\"]")
           output_buffer.should have_table_with_tag("th", "")
         end
 
@@ -151,14 +151,14 @@ describe "Tabletastic#table_for" do
           table_for(@posts) do |t|
             concat(t.data(:actions => :edit))
           end
-          output_buffer.should have_tag("a[@href=/posts/#{@post.id}/edit]", "Edit")
+          output_buffer.should have_tag("a[@href=\"/posts/#{@post.id}/edit\"]", "Edit")
         end
 
         it "includes path to post for :destroy" do
           table_for(@posts) do |t|
             concat(t.data(:actions => :destroy))
           end
-          output_buffer.should have_table_with_tag("a[@href=/posts/#{@post.id}]")
+          output_buffer.should have_table_with_tag("a[@href=\"/posts/#{@post.id}\"]")
           output_buffer.should have_table_with_tag("th", "")
         end
 
@@ -166,17 +166,17 @@ describe "Tabletastic#table_for" do
           table_for(@posts) do |t|
             concat(t.data(:actions => [:show, :edit]))
           end
-          output_buffer.should have_tag("td:nth-child(3) a[@href=/posts/#{@post.id}]", "Show")
-          output_buffer.should have_tag("td:nth-child(4) a[@href=/posts/#{@post.id}/edit]", "Edit")
+          output_buffer.should have_tag("td:nth-child(3) a[@href=\"/posts/#{@post.id}\"]", "Show")
+          output_buffer.should have_tag("td:nth-child(4) a[@href=\"/posts/#{@post.id}/edit\"]", "Edit")
         end
 
         it "includes path to post for :all" do
           table_for(@posts) do |t|
             concat(t.data(:actions => :all))
           end
-          output_buffer.should have_tag("td:nth-child(3) a[@href=/posts/#{@post.id}]", "Show")
-          output_buffer.should have_tag("td:nth-child(4) a[@href=/posts/#{@post.id}/edit]", "Edit")
-          output_buffer.should have_tag("td:nth-child(5) a[@href=/posts/#{@post.id}]", "Destroy")
+          output_buffer.should have_tag("td:nth-child(3) a[@href=\"/posts/#{@post.id}\"]", "Show")
+          output_buffer.should have_tag("td:nth-child(4) a[@href=\"/posts/#{@post.id}/edit\"]", "Edit")
+          output_buffer.should have_tag("td:nth-child(5) a[@href=\"/posts/#{@post.id}\"]", "Destroy")
         end
 
         context "with options[:actions_prefix]" do
@@ -184,30 +184,30 @@ describe "Tabletastic#table_for" do
             table_for(@posts) do |t|
               concat(t.data(:actions => :show, :action_prefix => :admin))
             end
-            output_buffer.should have_tag("td:nth-child(3) a[@href=/admin/posts/#{@post.id}]", "Show")
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Show")
           end
 
           it "includes path to admin post for :edit" do
             table_for(@posts) do |t|
               concat(t.data(:actions => :edit, :action_prefix => :admin))
             end
-            output_buffer.should have_tag("td:nth-child(3) a[@href=/admin/posts/#{@post.id}/edit]", "Edit")
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}/edit\"]", "Edit")
           end
 
           it "includes path to admin post for :destroy" do
             table_for(@posts) do |t|
               concat(t.data(:actions => :destroy, :action_prefix => :admin))
             end
-            output_buffer.should have_tag("td:nth-child(3) a[@href=/admin/posts/#{@post.id}]", "Destroy")
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Destroy")
           end
 
           it "includes path to admin for all actions" do
             table_for(@posts) do |t|
               concat(t.data(:actions => :all, :action_prefix => :admin))
             end
-            output_buffer.should have_tag("td:nth-child(3) a[@href=/admin/posts/#{@post.id}]", "Show")
-            output_buffer.should have_tag("td:nth-child(4) a[@href=/admin/posts/#{@post.id}/edit]", "Edit")
-            output_buffer.should have_tag("td:nth-child(5) a[@href=/admin/posts/#{@post.id}]", "Destroy")
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Show")
+            output_buffer.should have_tag("td:nth-child(4) a[@href=\"/admin/posts/#{@post.id}/edit\"]", "Edit")
+            output_buffer.should have_tag("td:nth-child(5) a[@href=\"/admin/posts/#{@post.id}\"]", "Destroy")
           end
         end
       end
@@ -236,7 +236,7 @@ describe "Tabletastic#table_for" do
           output_buffer.should have_tag("th:nth-child(3)", "")
           output_buffer.should_not have_tag("th", "Body")
 
-          output_buffer.should have_tag("td:nth-child(3) a[@href=/posts/#{@post.id}]")
+          output_buffer.should have_tag("td:nth-child(3) a[@href=\"/posts/#{@post.id}\"]")
         end
       end
     end
@@ -310,7 +310,7 @@ describe "Tabletastic#table_for" do
               concat(t.cell(:body))
             end
           end
-          output_buffer.should have_table_with_tag("td:nth-child(3) a[@href=/posts/#{@post.id}]")
+          output_buffer.should have_table_with_tag("td:nth-child(3) a[@href=\"/posts/#{@post.id}\"]")
         end
       end
 
