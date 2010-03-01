@@ -28,7 +28,7 @@ module Tabletastic
   class TableBuilder
     @@association_methods = %w[display_name full_name name title username login value to_s]
     @@default_hidden_columns = %w[created_at updated_at created_on updated_on lock_version version]
-    @@destroy_confirm_message = "Are you sure?"
+    @@destroy_confirm_message = I18n.t("Are you sure?")
 
     attr_accessor :field_labels
     attr_reader   :collection, :klass, :fields
@@ -59,7 +59,7 @@ module Tabletastic
         @template.concat(body)
       else
         @fields = args.empty? ? active_record_fields : args
-        @field_labels = fields.map { |f| f.to_s.humanize }
+        @field_labels = fields.map { |f| @klass.human_attribute_name(f.to_s) }
         action_cells(options[:actions], options[:action_prefix])
         [head, body].join("")
       end
@@ -93,7 +93,7 @@ module Tabletastic
 
       @fields << [method_or_proc, options.delete(:cell_html)]
 
-      @field_labels << (options.delete(:heading) || method.to_s.humanize)
+      @field_labels << (options.delete(:heading) || @klass.human_attribute_name(method.to_s))
       # Since this will likely be called with <%= %> (aka 'concat'), explicitly return an empty string
       # This suppresses unwanted output
       return ""
@@ -160,11 +160,11 @@ module Tabletastic
         compound_resource = [prefix, resource].compact
         case action
         when :show
-          @template.link_to("Show", compound_resource)
+          @template.link_to(I18n.t("Show"), compound_resource)
         when :destroy
-          @template.link_to("Destroy", compound_resource, :method => :delete, :confirm => @@destroy_confirm_message)
+          @template.link_to(I18n.t("Destroy"), compound_resource, :method => :delete, :confirm => @@destroy_confirm_message)
         else # edit, other resource GET actions
-          @template.link_to(action.to_s.titleize, @template.polymorphic_path(compound_resource, :action => action))
+          @template.link_to(I18n.t(action.to_s.titleize), @template.polymorphic_path(compound_resource, :action => action))
         end
       end
     end
