@@ -1,7 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
-include TabletasticSpecHelper
-include Tabletastic
-
+require 'spec_helper'
 
 describe "Tabletastic#table_for" do
 

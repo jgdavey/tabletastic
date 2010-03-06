@@ -1,7 +1,4 @@
 require 'spec_helper'
-include TabletasticSpecHelper
-include Tabletastic
-
 
 describe Tabletastic::TableField do
   it "should guess its heading automatically" do
@@ -9,12 +6,12 @@ describe Tabletastic::TableField do
     tf.method_or_proc.should == :method
     tf.heading.should == "Method"
   end
-  
+
   it "should know its heading when provided" do
     tf = TableField.new(:method, :heading => 'Foo')
     tf.heading.should == "Foo"
   end
-  
+
   it "should know what to do with a record" do
     tf = TableField.new(:downcase)
     tf.cell_data("HELLO").should == "hello"
@@ -26,5 +23,4 @@ describe Tabletastic::TableField do
     end
     tf.cell_data("hello").should == "HELLO"
   end
-
 end

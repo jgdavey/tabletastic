@@ -105,3 +105,6 @@ module TabletasticSpecHelper
     ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([])
   end
 end
+
+include TabletasticSpecHelper
+include Tabletastic

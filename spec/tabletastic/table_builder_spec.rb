@@ -1,12 +1,10 @@
 require 'spec_helper'
-include TabletasticSpecHelper
-include Tabletastic
 
 describe Tabletastic::TableBuilder do
-  
+
   before do
     @output_buffer = ActiveSupport::SafeBuffer.new
-    
+
     mock_everything
     ::Post.stub!(:content_columns).and_return([mock('column', :name => 'title'), mock('column', :name => 'body'), mock('column', :name => 'created_at')])
     @post.stub!(:title).and_return("The title of the post")
