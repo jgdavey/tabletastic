@@ -294,4 +294,19 @@ describe Tabletastic::TableBuilder do
       end
     end
   end
+  
+  context "using human_attribute_names" do
+    it "should work" do
+      ::Post.stub!(:human_attribute_name).with('body').and_return("Blah blue")
+
+      table_for(@posts) do |t|
+        t.data do
+          concat(t.cell(:title))
+          concat(t.cell(:body))
+        end
+      end
+
+      output_buffer.should have_table_with_tag("th", "Blah blue")
+    end
+  end
 end

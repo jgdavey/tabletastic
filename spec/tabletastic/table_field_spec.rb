@@ -8,13 +8,19 @@ describe Tabletastic::TableField do
   end
 
   it "should know its heading when provided" do
-    tf = TableField.new(:method, :heading => 'Foo')
+    tf = TableField.new(:method, :heading => 'Foo', :klass => ::Post)
     tf.heading.should == "Foo"
   end
 
   it "should know what to do with a record" do
     tf = TableField.new(:downcase)
     tf.cell_data("HELLO").should == "hello"
+  end
+
+  it "should use a human_attribute_name whenever possible" do
+    ::Post.stub!(:human_attribute_name).with('method').and_return("Blah blue")
+    tf = TableField.new(:method, :klass => ::Post)
+    tf.heading.should == "Blah blue"
   end
 
   it "should know what to do with a record (proc)" do

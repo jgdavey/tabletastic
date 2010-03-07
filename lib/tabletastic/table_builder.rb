@@ -59,7 +59,9 @@ module Tabletastic
     #   <td>$1.50</td>
     #
     def cell(*args, &proc)
-      @table_fields << TableField.new(*args, &proc)
+      options = args.extract_options!
+      options.merge!(:klass => klass)
+      @table_fields << TableField.new(*args, options, &proc)
       # Since this will likely be called with <%= %> (aka 'concat'), explicitly return an empty string
       # This suppresses unwanted output
       return ""

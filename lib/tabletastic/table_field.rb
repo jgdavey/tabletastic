@@ -9,7 +9,8 @@ module Tabletastic
       method = args.first.to_sym
       @method_or_proc = block_given? ? proc : method
       @cell_html = options[:cell_html]
-      @heading = options.delete(:heading) || method.to_s.humanize
+      @klass = options.delete(:klass)
+      @heading = options.delete(:heading) || @klass.try(:human_attribute_name, method.to_s) || method.to_s.humanize
     end
 
     def cell_data(record)
