@@ -13,16 +13,17 @@ def smart_require(gem_name, gem_version = '>= 0.0.0', lib_name = nil)
   end
 end
 
-smart_require 'rspec', '>= 1.2.9', 'spec'
+smart_require 'rspec', '>= 1.3.0', 'spec'
 require 'spec/autorun'
 smart_require 'nokogiri'
 smart_require 'rspec_tag_matchers', '>= 1.0.0'
-smart_require 'activesupport', '>= 3.0.0.beta', 'active_support'
-smart_require 'actionpack', '>= 3.0.0.beta', 'action_pack'
-smart_require 'actioncontroller', '>= 3.0.0.beta', 'action_controller'
-smart_require 'actionview', '>= 3.0.0.beta', 'action_view'
-smart_require 'activerecord', '>= 3.0.0.beta', 'active_record'
-
+smart_require 'activesupport', '>= 3.0.0.beta2', 'active_support'
+smart_require 'actionpack',    '>= 3.0.0.beta2', 'action_pack'
+smart_require 'activerecord',  '>= 3.0.0.beta2', 'active_record'
+require 'action_controller'
+require 'action_view/base'
+require 'action_view/template'
+require 'action_view/helpers'
 Spec::Runner.configure do |config|
   config.include(RspecTagMatchers)
 end
@@ -31,6 +32,8 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'tabletastic'
 
 module TabletasticSpecHelper
+  include ActiveSupport
+  include ActionView
   include ActionView::Helpers::UrlHelper
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::TextHelper
@@ -38,7 +41,7 @@ module TabletasticSpecHelper
   include ActionView::Helpers::RecordIdentificationHelper
   include ActionView::Helpers::RecordTagHelper
   include ActionView::Helpers::CaptureHelper
-  include ActiveSupport
+  include ActionView::Helpers::RawOutputHelper
   include ActionController::PolymorphicRoutes
 
   def self.included(base)
@@ -72,6 +75,7 @@ module TabletasticSpecHelper
     @post.stub!(:class).and_return(::Post)
     @post.stub!(:id).and_return(nil)
     @post.stub!(:author)
+    @post.stub!(:to_key).and_return([2])
     ::Post.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
     ::Post.stub!(:model_name).and_return(ActiveModel::Name.new(::Post))
 
@@ -91,6 +95,7 @@ module TabletasticSpecHelper
     @freds_post.stub!(:title).and_return('Fred\'s Post')
     @freds_post.stub!(:body)
     @freds_post.stub!(:id).and_return(19)
+    @freds_post.stub!(:to_key).and_return([19])
     @freds_post.stub!(:author).and_return(@fred)
     @freds_post.stub!(:author_id).and_return(@fred.id)
     @fred.stub!(:posts).and_return([@freds_post])

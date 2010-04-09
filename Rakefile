@@ -1,28 +1,28 @@
 require 'rubygems'
 require 'rake'
-
-GEM = "tabletastic"
-LONGDESCRIPTION = %Q{A table builder for active record collections \
-  that produces semantically rich and accessible markup}
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |s|
-    s.name = GEM
-    s.summary = %Q{A smarter table builder for Rails collections}
-    s.description = LONGDESCRIPTION
-    s.email = "josh@joshuadavey.com"
-    s.homepage = "http://github.com/jgdavey/tabletastic"
-    s.authors = ["Joshua Davey"]
-    s.require_path = 'lib'
-
-    s.add_development_dependency "rspec", ">= 1.2.9"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
-end
+#
+# GEM = "tabletastic"
+# LONGDESCRIPTION = %Q{A table builder for active record collections \
+#   that produces semantically rich and accessible markup}
+#
+# begin
+#   require 'jeweler'
+#   Jeweler::Tasks.new do |s|
+#     s.name = GEM
+#     s.summary = %Q{A smarter table builder for Rails collections}
+#     s.description = LONGDESCRIPTION
+#     s.email = "josh@joshuadavey.com"
+#     s.homepage = "http://github.com/jgdavey/tabletastic"
+#     s.authors = ["Joshua Davey"]
+#     s.require_path = 'lib'
+#
+#     s.add_development_dependency "rspec", ">= 1.2.9"
+#     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+#   end
+#   Jeweler::GemcutterTasks.new
+# rescue LoadError
+#   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
+# end
 
 require 'spec/rake/spectask'
 Spec::Rake::SpecTask.new(:spec) do |spec|

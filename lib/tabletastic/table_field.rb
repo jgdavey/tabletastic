@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object'
+
 module Tabletastic
   class TableField
     @@association_methods = %w[to_label display_name full_name name title username login value to_str to_s]

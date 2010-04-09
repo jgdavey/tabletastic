@@ -17,9 +17,7 @@ describe Tabletastic::TableBuilder do
   context "without a block" do
     context "with no other arguments" do
       before do
-        table_for(@posts) do |t|
-          concat(t.data)
-        end
+        concat table_for(@posts) { |t| t.data }
       end
 
       it "should output table with id of the class of the collection" do
@@ -77,9 +75,7 @@ describe Tabletastic::TableBuilder do
           ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([@mock_reflection_belongs_to_author])
           @posts = [@freds_post]
           @output_buffer = ""
-          table_for(@posts) do |t|
-            concat(t.data)
-          end
+          concat table_for(@posts) { |t| t.data }
           output_buffer.should have_table_with_tag("th", "Author")
           output_buffer.should have_table_with_tag("td", "Fred Smith")
         end
@@ -201,12 +197,12 @@ describe Tabletastic::TableBuilder do
   context "with a block" do
     context "and normal columns" do
       before do
-        table_for(@posts) do |t|
+        concat(table_for(@posts) do |t|
           t.data do
-            concat(t.cell(:title))
-            concat(t.cell(:body))
+            t.cell(:title)
+            t.cell(:body)
           end
-        end
+        end)
       end
 
       it "should include the data for the fields passed in" do
@@ -218,12 +214,12 @@ describe Tabletastic::TableBuilder do
 
     context "with custom cell options" do
       before do
-        table_for(@posts) do |t|
+        concat(table_for(@posts) do |t|
           t.data do
-            concat(t.cell(:title, :heading => "FooBar"))
-            concat(t.cell(:body, :cell_html => {:class => "batquux"}))
+            t.cell(:title, :heading => "FooBar")
+            t.cell(:body, :cell_html => {:class => "batquux"})
           end
-        end
+        end)
       end
 
       it "should change the heading label for :heading option" do
@@ -238,12 +234,12 @@ describe Tabletastic::TableBuilder do
 
     context "with custom cell options" do
       before do
-        table_for(@posts) do |t|
+        concat(table_for(@posts) do |t|
           t.data do
-            concat(t.cell(:title) {|p| link_to p.title, "/" })
-            concat(t.cell(:body, :heading => "Content") {|p| p.body })
+            t.cell(:title) {|p| link_to p.title, "/" }
+            t.cell(:body, :heading => "Content") {|p| p.body }
           end
-        end
+        end)
       end
 
       it "accepts a block as a lazy attribute" do
@@ -261,12 +257,12 @@ describe Tabletastic::TableBuilder do
 
     context "with options[:actions]" do
       it "includes path to post for :show" do
-        table_for(@posts) do |t|
+        concat(table_for(@posts) do |t|
           t.data(:actions => :show) do
-            concat(t.cell(:title))
-            concat(t.cell(:body))
+            t.cell(:title)
+            t.cell(:body)
           end
-        end
+        end)
         output_buffer.should have_table_with_tag("td:nth-child(3) a[@href=\"/posts/#{@post.id}\"]")
       end
     end
@@ -275,12 +271,12 @@ describe Tabletastic::TableBuilder do
       before do
         ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([@mock_reflection_belongs_to_author])
         @posts = [@freds_post]
-        table_for(@posts) do |t|
+        concat(table_for(@posts) do |t|
           t.data do
-            concat(t.cell(:title))
-            concat(t.cell(:author))
+            t.cell(:title)
+            t.cell(:author)
           end
-        end
+        end)
       end
 
       it "should include normal columns" do
@@ -299,12 +295,12 @@ describe Tabletastic::TableBuilder do
     it "should work" do
       ::Post.stub!(:human_attribute_name).with('body').and_return("Blah blue")
 
-      table_for(@posts) do |t|
+      concat(table_for(@posts) do |t|
         t.data do
-          concat(t.cell(:title))
-          concat(t.cell(:body))
+          t.cell(:title)
+          t.cell(:body)
         end
-      end
+      end)
 
       output_buffer.should have_table_with_tag("th", "Blah blue")
     end

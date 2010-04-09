@@ -27,14 +27,11 @@ module Tabletastic
       options = args.extract_options!
       if block_given?
         yield self
-        action_cells(options[:actions], options[:action_prefix])
-        @template.concat(head.html_safe)
-        @template.concat(body.html_safe)
       else
         @table_fields = args.empty? ? active_record_fields : args.collect {|f| TableField.new(f.to_sym)}
-        action_cells(options[:actions], options[:action_prefix])
-        [head, body].join("").html_safe
       end
+      action_cells(options[:actions], options[:action_prefix])
+      [head, body].join("").html_safe
     end
 
     # individually specify a column, which will build up the header,
@@ -61,7 +58,8 @@ module Tabletastic
     def cell(*args, &proc)
       options = args.extract_options!
       options.merge!(:klass => klass)
-      @table_fields << TableField.new(*args, options, &proc)
+      args << options
+      @table_fields << TableField.new(*args, &proc)
       # Since this will likely be called with <%= %> (aka 'concat'), explicitly return an empty string
       # This suppresses unwanted output
       return ""

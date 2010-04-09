@@ -2,14 +2,13 @@ require 'tabletastic/table_builder'
 
 module Tabletastic
   # returns and outputs a table for the given active record collection
-  def table_for(collection, *args)
+  def table_for(collection, *args, &block)
     klass = default_class_for(collection)
     options = args.extract_options!
     options[:html] ||= {}
     options[:html][:id] ||= get_id_for(klass)
-    concat(tag(:table, options[:html], true))
-    yield TableBuilder.new(collection, klass, self)
-    concat("</table>".html_safe)
+    result = block.call(TableBuilder.new(collection, klass, self))
+    content_tag(:table, result, options[:html])
   end
 
   private
