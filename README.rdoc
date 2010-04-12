@@ -24,18 +24,23 @@ This is my attempt to simplify this (the default scaffold):
 
 into this:
 
-  <% table_for(@posts) do |t| %>
-    <%= t.data :actions => :all %>
-  <% end %>
+  <%= table_for(@posts) do |t|
+        t.data :actions => :all
+      end %>
 
 and still output the same effective results, but with all the semantic
 goodness that tabular data should have, i.e. a +thead+ and +tbody+ element.
 
 
+== NOTICE: Rails 3 only!
+
+As of version 0.2.0, this project is <strong>no longer compatible with Rails 2</strong>.
+To use, make sure you're using the latest release of Rails 3 (beta 2 at this time).
+
 == Installation
 
-In your Rails project, as a gem:
-  config.gem "tabletastic", :source => "http://gemcutter.org"
+In your Rails project, Gemfile:
+  gem "tabletastic"
 
 Or, for if you're behind the times, as a plugin:
   script/plugin install git://github.com/jgdavey/tabletastic.git
@@ -49,9 +54,9 @@ you can just use the helper. It will try to detect all content fields and belong
 
 In your view, simply calling:
 
-  <% table_for(@posts) do |t| %>
-    <%= t.data %>
-  <% end %>
+  <% table_for(@posts) do |t|
+       t.data
+     end %>
 
 will produce html like this:
 
@@ -86,9 +91,9 @@ will produce html like this:
 To limit the fields, change the order, or to include fields that are excluded by default (such as created_at),
 You can list methods to call on each resource:
 
-  <% table_for(@posts) do |t| %>
-    <%= t.data :author, :title, :created_at %>
-  <% end %>
+  <%= table_for(@posts) do |t|
+    t.data :author, :title, :created_at
+  end %>
 
 will produce html like:
 
@@ -121,13 +126,13 @@ will produce html like:
 
 For even greater flexibility, you can pass +data+ a block:
 
-  <% table_for(@posts) do |t| %>
-    <% t.data :actions => :all do %>
-      <%= t.cell(:title, :cell_html => {:class => "titlestring"}) %>
-      <%= t.cell(:body, :heading => "Content") {|p| truncate(p.body, 30)} %>
-      <%= t.cell(:author) {|p| p.author && link_to(p.author.name, p.author) } %>
-    <% end -%>
-  <% end %>
+  <%= table_for(@posts) do |t|
+    t.data :actions => :all do
+      t.cell(:title, :cell_html => {:class => "titlestring"})
+      t.cell(:body, :heading => "Content") {|p| truncate(p.body, 30)}
+      t.cell(:author) {|p| p.author && link_to(p.author.name, p.author) }
+    end
+  end %>
 
 will product html like:
 
@@ -206,4 +211,4 @@ If it _still_ isn't flexible enough for your needs, it might be time to return t
 
 == Copyright
 
-Copyright (c) 2009 Joshua Davey. See LICENSE for details.
+Copyright (c) 2010 Joshua Davey. See LICENSE for details.
