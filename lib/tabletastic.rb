@@ -3,6 +3,7 @@ require 'tabletastic/table_builder'
 module Tabletastic
   # returns and outputs a table for the given active record collection
   def table_for(collection, *args, &block)
+    raise ArgumentError, "you must provide a block" unless block_given?
     klass = default_class_for(collection)
     options = args.extract_options!
     options[:html] ||= {}
@@ -22,6 +23,6 @@ module Tabletastic
   end
 
   def get_id_for(klass)
-    klass.to_s.tableize
+    klass ? klass.model_name.collection : ""
   end
 end

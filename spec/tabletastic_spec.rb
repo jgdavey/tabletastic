@@ -12,15 +12,13 @@ describe "Tabletastic#table_for" do
     end
 
     it "should build a basic table" do
-      table_for([]) do |t|
-      end
+      concat(table_for([]) {})
       output_buffer.should have_tag("table")
     end
 
     context "with options" do
       it "should pass along html options" do
-        table_for([], :html => {:class => 'special'}) do |t|
-        end
+        concat(table_for([], :html => {:class => 'special'}){})
         output_buffer.should have_tag("table.special")
       end
     end
