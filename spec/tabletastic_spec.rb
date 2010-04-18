@@ -40,4 +40,11 @@ describe "Tabletastic#table_for" do
       output_buffer.should_not have_tag("table.default")
     end
   end
+  
+  describe "without a block" do
+    it "should use default block" do
+      concat table_for([])
+      output_buffer.should have_tag("table")
+    end
+  end
 end

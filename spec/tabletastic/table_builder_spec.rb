@@ -305,4 +305,12 @@ describe Tabletastic::TableBuilder do
       output_buffer.should have_table_with_tag("th", "Blah blue")
     end
   end
+  
+  context "when table_for is not passed a block" do
+    it "the data should use the default option" do
+      Tabletastic.default_table_block = lambda {|table| table.data}
+      concat table_for(@posts)
+      output_buffer.should have_table_with_tag("td", "The title of the post")
+    end
+  end
 end

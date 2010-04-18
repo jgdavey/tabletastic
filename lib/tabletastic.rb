@@ -2,11 +2,13 @@ require 'tabletastic/table_builder'
 
 module Tabletastic
   @@default_table_html = {}
-  mattr_accessor :default_table_html
+  @@default_table_block = lambda {|table| table.data}
+
+  mattr_accessor :default_table_html, :default_table_block
 
   # returns and outputs a table for the given active record collection
   def table_for(collection, *args, &block)
-    raise ArgumentError, "you must provide a block" unless block_given?
+    block = Tabletastic.default_table_block unless block_given?
     klass = default_class_for(collection)
     options = args.extract_options!
     initialize_html_options(options, klass)
