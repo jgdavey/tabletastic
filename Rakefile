@@ -6,7 +6,7 @@ task :build do
 end
 
 task :release => :build do
-  system "gem push bundler-#{Tabletastic::VERSION}"
+  system "gem push tabletastic-#{Tabletastic::VERSION}"
 end
 
 # == RSpec
