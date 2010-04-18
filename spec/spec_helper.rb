@@ -113,3 +113,4 @@ end
 
 include TabletasticSpecHelper
 include Tabletastic
+include Tabletastic::Helper
