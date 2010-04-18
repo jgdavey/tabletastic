@@ -27,7 +27,7 @@ module Tabletastic
   def initialize_html_options(options, klass)
     options[:html] ||= {}
     options[:html][:id] ||= get_id_for(klass)
-    options[:html].merge!(Tabletastic.default_table_html)
+    options[:html].reverse_merge!(Tabletastic.default_table_html)
   end
 
   def get_id_for(klass)

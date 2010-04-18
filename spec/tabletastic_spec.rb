@@ -21,12 +21,23 @@ describe "Tabletastic#table_for" do
         concat(table_for([], :html => {:class => 'special'}){})
         output_buffer.should have_tag("table.special")
       end
+    end
+  end
 
-      it "should allow for default options" do
-        Tabletastic.default_table_html = {:class => 'default'}
-        concat(table_for([]){})
-        output_buffer.should have_tag("table.default")
-      end
+  describe "default options" do
+    before do
+      Tabletastic.default_table_html = {:class => 'default', :cellspacing => 0}
+    end
+
+    it "should allow default table html to be set" do
+      concat(table_for([]){})
+      output_buffer.should have_tag("table.default")
+    end
+
+    it "can be overridden with inline options" do
+      concat(table_for([], :html => {:class => 'newclass'}){})
+      output_buffer.should have_tag("table.newclass")
+      output_buffer.should_not have_tag("table.default")
     end
   end
 end
