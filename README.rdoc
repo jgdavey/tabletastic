@@ -210,6 +210,63 @@ will product html like:
 
 If it _still_ isn't flexible enough for your needs, it might be time to return to static html/erb.
 
+== Default Options and Tabletastic initializer
+
+As of version 0.2.0, you can now setup some of your own defaults in an initializer file.
+
+For example, create a file called tabletastic.rb in your config/initializers folder.
+
+Within that file, there are several defaults that you can setup for yourself, including:
+
+  Tabletastic.default_table_html
+  Tabletastic.default_table_block
+
+Both of these options are setup up so that inline options will still override whatever they are set to,
+but providing them here will save you some code if you commonly reuse options.
+
+By default, +default_table_html+ is simple an empty hash <code>{}</code>. By providing your own defaults, you can ensure that all
+of your tables have a specific html +class+ or +cellspacing+, or whatever.
+
+If <code>Tabletastic.default_table_html</code> is set to <code>{:cellspacing => 0, :class => 'yowza'}</code>,
+then all tabletastic tables will have this html by default, unless overridden:
+
+  table_for(@posts) do |t|
+
+will produce:
+
+  <table class="yowza" cellspacing="0" id="posts">
+
+Similarly, all of those calls to +table_for+ can get boring since you might be using the same block every time.
+The option +default_table_block+ lets you set a default lambda so that you can omit the block with +table_for+.
+Since by default +default_table_block+ is set to <code>lambda{|table| table.data}</code>, the following:
+
+  <%= table_for(@posts) %>
+
+will be the same as
+
+  <%= table_for(@posts) do |t|
+        t.data
+      end %>
+
+However, just like +default_table_html+, you can set a different block in the initializer file for your block to default to.
+For example:
+
+  Tabletastic.default_table_block = lambda {|table| table.data :actions => :all }
+
+will make the following equivalent:
+
+  <%= table_for(@posts) %>
+
+  <%= table_for(@posts) do |t|
+        t.data :actions => :all
+      end %>
+
+And to omit those action links, you can just use +table_for+ the old-fashioned way:
+
+  <%= table_for(@posts) do |t|
+        t.data
+      end %>
+
 == Note on Patches/Pull Requests
 
 * Fork the project.
