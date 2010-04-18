@@ -21,6 +21,12 @@ describe "Tabletastic#table_for" do
         concat(table_for([], :html => {:class => 'special'}){})
         output_buffer.should have_tag("table.special")
       end
+
+      it "should allow for default options" do
+        Tabletastic.default_table_html = {:class => 'default'}
+        concat(table_for([]){})
+        output_buffer.should have_tag("table.default")
+      end
     end
   end
 end
