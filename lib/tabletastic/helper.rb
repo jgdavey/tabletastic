@@ -32,5 +32,3 @@ module Tabletastic
     end
   end
 end
-
-ActionView::Base.send :include, Tabletastic::Helper
