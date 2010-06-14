@@ -1,29 +1,15 @@
+## Use bundler to exec the specs
+
 $LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'rubygems'
 
-def smart_require(gem_name, gem_version = '>= 0.0.0', lib_name = nil)
-  lib_name ||= gem_name
-  begin
-    require lib_name if lib_name
-  rescue LoadError
-    if gem_name
-      gem gem_name, gem_version
-      require lib_name if lib_name
-    end
-  end
-end
-
-smart_require 'rspec', '>= 1.3.0', 'spec'
 require 'spec/autorun'
-smart_require 'nokogiri'
-smart_require 'rspec_tag_matchers', '>= 1.0.0'
-smart_require 'activesupport', '>= 3.0.0.beta3', 'active_support'
-smart_require 'actionpack',    '>= 3.0.0.beta3', 'action_pack'
-smart_require 'activerecord',  '>= 3.0.0.beta3', 'active_record'
+require 'rspec_tag_matchers'
+require 'active_record'
 require 'action_controller'
 require 'action_view/base'
 require 'action_view/template'
 require 'action_view/helpers'
+
 Spec::Runner.configure do |config|
   config.include(RspecTagMatchers)
 end
