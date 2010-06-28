@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
 
   s.require_path = 'lib'
   s.required_rubygems_version = ">= 1.3.6"
+  s.add_runtime_dependency('activesupport', '>= 3.0.0.beta2')
   s.test_files = ["spec/spec_helper.rb","spec/tabletastic_spec.rb"]
   s.add_development_dependency "rspec"
 end
