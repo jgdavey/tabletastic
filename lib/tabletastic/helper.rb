@@ -32,3 +32,7 @@ module Tabletastic
     end
   end
 end
+
+ActiveSupport.on_load(:action_view) do
+  include Tabletastic::Helper
+end
