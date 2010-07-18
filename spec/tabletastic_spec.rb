@@ -24,6 +24,26 @@ describe "Tabletastic#table_for" do
     end
   end
 
+  describe "guessing its class collection" do
+    before do
+      mock_everything
+    end
+
+    it "should find the class of the collection (ActiveRecord::Relation)" do
+      table = mock(Arel::Table)
+      collection = ActiveRecord::Relation.new(@post.class, table)
+      collection.stub!(:build_arel => table)
+      klass = Tabletastic::TableBuilder.send(:default_class_for, collection)
+      klass.should == Post
+    end
+
+    it "should find the class of the collection (Array of AR objects)" do
+      collection = [@post]
+      klass = Tabletastic::TableBuilder.send(:default_class_for, collection)
+      klass.should == Post
+    end
+  end
+
   describe "default options" do
     before do
       Tabletastic.default_table_html = {:class => 'default', :cellspacing => 0}
@@ -40,7 +60,7 @@ describe "Tabletastic#table_for" do
       output_buffer.should_not have_tag("table.default")
     end
   end
-  
+
   describe "without a block" do
     it "should use default block" do
       concat table_for([])

@@ -14,8 +14,8 @@ module Tabletastic
     private
     # Finds the class representing the objects within the collection
     def default_class_for(collection)
-      if collection.respond_to?(:proxy_reflection)
-        collection.proxy_reflection.klass
+      if collection.respond_to?(:klass) # ActiveRecord::Relation
+        collection.klass
       elsif !collection.empty?
         collection.first.class
       end
