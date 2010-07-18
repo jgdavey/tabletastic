@@ -31,7 +31,7 @@ module Tabletastic
         @table_fields = args.empty? ? active_record_fields : args.collect {|f| TableField.new(f.to_sym)}
       end
       action_cells(options[:actions], options[:action_prefix])
-      [head, body].join("").html_safe
+      ["\n", head, "\n", body, "\n"].join("").html_safe
     end
 
     # individually specify a column, which will build up the header,
@@ -77,11 +77,11 @@ module Tabletastic
 
     def body
       content_tag(:tbody) do
-        @collection.inject("") do |rows, record|
+        @collection.inject("\n") do |rows, record|
           rowclass = @template.cycle("odd","even")
           rows += @template.content_tag_for(:tr, record, :class => rowclass) do
             cells_for_row(record)
-          end
+          end + "\n"
         end
       end
     end
