@@ -133,7 +133,10 @@ module Tabletastic
 
     def active_record_association_reflections
       return [] unless klass.respond_to?(:reflect_on_all_associations)
-      associations = klass.reflect_on_all_associations(:belongs_to).map(&:name)
+      associations = []
+      associations += klass.reflect_on_all_associations(:belongs_to).map(&:name)
+      associations += klass.reflect_on_all_associations(:has_one).map(&:name)
+      associations
     end
 
     def content_tag(name, content = nil, options = nil, escape = true, &block)

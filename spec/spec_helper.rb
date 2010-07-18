@@ -55,6 +55,8 @@ Spork.prefork do
     end
     class ::Author
     end
+    class ::Profile
+    end
 
     def mock_everything
       def post_path(post); "/posts/#{post.id}"; end
@@ -71,16 +73,22 @@ Spork.prefork do
       ::Post.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
       ::Post.stub!(:model_name).and_return(ActiveModel::Name.new(::Post))
 
-      @fred = mock('user')
+      @fred = mock('author', :to_key => nil)
       @fred.stub!(:class).and_return(::Author)
       @fred.stub!(:name).and_return('Fred Smith')
       @fred.stub!(:id).and_return(37)
+
+      @profile = mock('profile')
+      @profile.stub!(:author).and_return(@fred)
+      @profile.stub!(:bio).and_return("This is my bio")
+      @fred.stub!(:profile).and_return(@profile)
+
+      ::Author.stub!(:content_columns).and_return([mock('column', :name => "name")])
 
       ::Author.stub!(:find).and_return([@fred])
       ::Author.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
       ::Author.stub!(:human_name).and_return('Author')
       ::Author.stub!(:model_name).and_return(ActiveModel::Name.new(::Author))
-      ::Author.stub!(:reflect_on_association).and_return { |column_name| mock('reflection', :options => {}, :klass => Post, :macro => :has_many) if column_name == :posts }
 
       @freds_post = mock('post')
       @freds_post.stub!(:class).and_return(::Post)
@@ -93,13 +101,22 @@ Spork.prefork do
       @fred.stub!(:posts).and_return([@freds_post])
       @fred.stub!(:post_ids).and_return([@freds_post.id])
 
-      @mock_reflection_belongs_to_author = mock('reflection', :options => {}, :name => :author, :klass => ::Author, :macro => :belongs_to)
+      @mock_reflection_belongs_to_author = mock('reflection1', :options => {}, :name => :author, :macro => :belongs_to, :collection => false)
+
+      @mock_reflection_has_one_profile = mock('reflection2', :options => {}, :name => :profile, :macro => :has_one, :collection => false)
 
       ::Post.stub!(:reflect_on_association).and_return do |column_name|
         @mock_reflection_belongs_to_author if column_name == :author
       end
 
-      ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([])
+      ::Author.stub!(:reflect_on_association).and_return do |column_name|
+        mock('reflection', :options => {}, :klass => Post, :macro => :has_many) if column_name == :posts
+        @mock_reflection_has_one_profile if column_name == :profile
+      end
+
+
+      ::Post.stub!(:reflect_on_all_associations).and_return([])
+      ::Author.stub!(:reflect_on_all_associations).and_return([])
     end
   end
 

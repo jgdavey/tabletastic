@@ -71,13 +71,21 @@ describe Tabletastic::TableBuilder do
       end
 
       context "when collection has associations" do
+        before do
+          @output_buffer = ActiveSupport::SafeBuffer.new
+        end
         it "should handle belongs_to associations" do
           ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([@mock_reflection_belongs_to_author])
           @posts = [@freds_post]
-          @output_buffer = ""
           concat table_for(@posts) { |t| t.data }
           output_buffer.should have_table_with_tag("th", "Author")
           output_buffer.should have_table_with_tag("td", "Fred Smith")
+        end
+
+        it "should handle has_one associations" do
+          ::Author.stub!(:reflect_on_all_associations).with(:has_one).and_return([@mock_reflection_has_one_profile])
+          concat table_for([@fred]) { |t| t.data }
+          output_buffer.should have_table_with_tag("th", "Profile")
         end
       end
     end
@@ -290,7 +298,7 @@ describe Tabletastic::TableBuilder do
       end
     end
   end
-  
+
   context "using human_attribute_names" do
     it "should work" do
       ::Post.stub!(:human_attribute_name).with('body').and_return("Blah blue")
@@ -305,7 +313,7 @@ describe Tabletastic::TableBuilder do
       output_buffer.should have_table_with_tag("th", "Blah blue")
     end
   end
-  
+
   context "when table_for is not passed a block" do
     it "the data should use the default option" do
       Tabletastic.default_table_block = lambda {|table| table.data}
