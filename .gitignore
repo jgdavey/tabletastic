@@ -21,3 +21,4 @@ pkg
 ## PROJECT::SPECIFIC
 doc/
 *.gem
+.bundle
