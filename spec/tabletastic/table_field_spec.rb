@@ -29,4 +29,10 @@ describe Tabletastic::TableField do
     end
     tf.cell_data("hello").should == "HELLO"
   end
+
+  it "should return normal, non html-safe strings" do
+    post = mock(:booya => 'crazy')
+    tf = TableField.new(:booya)
+    tf.cell_data(post).should_not be_html_safe
+  end
 end
