@@ -30,11 +30,10 @@ Spork.prefork do
     include ActionView::Helpers::TagHelper
     include ActionView::Helpers::TextHelper
     include ActionView::Helpers::ActiveModelHelper
-    include ActionView::Helpers::RecordIdentificationHelper
     include ActionView::Helpers::RecordTagHelper
     include ActionView::Helpers::CaptureHelper
     include ActionView::Helpers::RawOutputHelper
-    include ActionController::PolymorphicRoutes
+    include ActionDispatch::Routing::PolymorphicRoutes
 
     def self.included(base)
       base.class_eval do
