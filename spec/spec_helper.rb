@@ -41,6 +41,10 @@ Spork.prefork do
       end
     end
 
+    def reset_output_buffer!
+      @output_buffer = ActionView::OutputBuffer.new
+    end
+
     module ::RspecTagMatchers
       def have_table_with_tag(selector, inner_text_or_options = nil, options = {}, &block)
         HaveTag.new("table", nil, {}) &&

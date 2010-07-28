@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Tabletastic#table_for" do
 
   before do
-    @output_buffer = ActiveSupport::SafeBuffer.new
+    reset_output_buffer!
   end
 
   describe "basics" do
