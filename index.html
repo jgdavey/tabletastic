@@ -53,7 +53,7 @@
     </div>
 
     <h2>Dependencies</h2>
-    <p>&gt;= rails 3.0.0.beta2</p>
+    <p>&gt;= rails 3.0.0.rc</p>
     <h2>Authors</h2>
     <p>Joshua Davey (josh@joshuadavey.com)</p>
 
@@ -68,6 +68,204 @@
       by running:
       <pre>$ git clone git://github.com/jgdavey/tabletastic</pre>
     </p>
+
+    <h2>Installation</h2>
+    <p><strong>NOTICE: Rails 3 only!</strong></p>
+
+    <p>In your Rails project, Gemfile:</p>
+
+    <pre>gem &quot;tabletastic&quot;, '~> 0.2.0.pre5'</pre>
+
+    <p>Optionally, you can create an initializer at config/initializers/tabletastic.rb</p>
+
+    <h2>Usage</h2>
+
+    <p>
+    By default, you can just use the table_for method to build up your table.
+    Assuming you have a Post model with title and body, that belongs to an
+    Author model with a name, you can just use the helper. It will try to
+    detect all content fields and belongs to associations.
+    </p>
+    <p>In your view, simply calling:</p>
+
+    <pre class="code">
+      <span class='lt op'>&lt;</span><span class='string val'>%= table_for(@posts) do |t|
+            t.data
+          end %&gt;
+    </span></pre>
+
+    <p> will produce html like this:</p>
+
+    <pre class="code">
+      <span class='lt op'>&lt;</span><span class='table identifier id'>table</span> <span class='id identifier id'>id</span><span class='assign token'>=</span><span class='string val'>&quot;posts&quot;</span><span class='gt op'>&gt;</span>
+        <span class='lt op'>&lt;</span><span class='thead identifier id'>thead</span><span class='gt op'>&gt;</span>
+          <span class='lt op'>&lt;</span><span class='tr identifier id'>tr</span><span class='gt op'>&gt;</span>
+            <span class='lt op'>&lt;</span><span class='th identifier id'>th</span><span class='gt op'>&gt;</span><span class='Title constant id'>Title</span><span class='lt op'>&lt;</span><span class='regexp val'>/th&gt;
+
+            &lt;th&gt;Body&lt;/</span><span class='th identifier id'>th</span><span class='gt op'>&gt;</span>
+            <span class='lt op'>&lt;</span><span class='th identifier id'>th</span><span class='gt op'>&gt;</span><span class='Author constant id'>Author</span><span class='lt op'>&lt;</span><span class='regexp val'>/th&gt;
+          &lt;/</span><span class='tr identifier id'>tr</span><span class='gt op'>&gt;</span>
+        <span class='lt op'>&lt;</span><span class='regexp val'>/thead&gt;
+
+        &lt;tbody&gt;
+          &lt;tr class=&quot;post odd&quot; id=&quot;post_1&quot;&gt;
+            &lt;td&gt;Something&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+            <span class='lt op'>&lt;</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span><span class='Lorem constant id'>Lorem</span> <span class='ipsum identifier id'>ipsum</span> <span class='dolor identifier id'>dolor</span> <span class='sit identifier id'>sit</span> <span class='amet identifier id'>amet</span> <span class='consequat identifier id'>consequat</span><span class='dot token'>.</span> <span class='Duis constant id'>Duis</span> <span class='aute identifier id'>aute</span> <span class='irure identifier id'>irure</span> <span class='dolor identifier id'>dolor</span><span class='dot token'>.</span><span class='lt op'>&lt;</span><span class='regexp val'>/td&gt;
+
+            &lt;td&gt;Jim Beam&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+          <span class='lt op'>&lt;</span><span class='regexp val'>/tr&gt;
+          &lt;tr class=&quot;post even&quot; id=&quot;post_2&quot;&gt;
+            &lt;td&gt;Second Post&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+
+            <span class='lt op'>&lt;</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span><span class='This constant id'>This</span> <span class='is identifier id'>is</span> <span class='the identifier id'>the</span> <span class='second identifier id'>second</span> <span class='post identifier id'>post</span><span class='lt op'>&lt;</span><span class='regexp val'>/td&gt;
+            &lt;td&gt;Jack Daniels&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+
+          <span class='lt op'>&lt;</span><span class='regexp val'>/tr&gt;
+          &lt;tr class=&quot;post odd&quot; id=&quot;post_3&quot;&gt;
+            &lt;td&gt;Something else&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+            <span class='lt op'>&lt;</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span><span class='Blah! constant id'>Blah!</span><span class='lt op'>&lt;</span><span class='regexp val'>/td&gt;
+
+            &lt;td&gt;&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+          <span class='lt op'>&lt;</span><span class='regexp val'>/tr&gt;
+        &lt;/</span><span class='tbody identifier id'>tbody</span><span class='gt op'>&gt;</span>
+      <span class='lt op'>&lt;</span><span class='regexp val'>/table&gt;
+    </span></pre>
+    <p>
+      To limit the fields, change the order, or to include fields that are
+      excluded by default (such as created_at), You can list methods to call on
+      each resource:
+    </p>
+
+    <pre class="code">
+      <span class='lt op'>&lt;</span><span class='string val'>%= table_for(@posts) do |t|
+        t.data :author, :title, :created_at
+      end %&gt;
+    </span></pre>
+
+    <p>will produce html like:</p>
+
+    <pre class="code">
+      <span class='lt op'>&lt;</span><span class='table identifier id'>table</span> <span class='id identifier id'>id</span><span class='assign token'>=</span><span class='string val'>&quot;posts&quot;</span><span class='gt op'>&gt;</span>
+
+        <span class='lt op'>&lt;</span><span class='thead identifier id'>thead</span><span class='gt op'>&gt;</span>
+          <span class='lt op'>&lt;</span><span class='tr identifier id'>tr</span><span class='gt op'>&gt;</span>
+            <span class='lt op'>&lt;</span><span class='th identifier id'>th</span><span class='gt op'>&gt;</span><span class='Author constant id'>Author</span><span class='lt op'>&lt;</span><span class='regexp val'>/th&gt;
+            &lt;th&gt;Title&lt;/</span><span class='th identifier id'>th</span><span class='gt op'>&gt;</span>
+
+            <span class='lt op'>&lt;</span><span class='th identifier id'>th</span><span class='gt op'>&gt;</span><span class='Created constant id'>Created</span> <span class='at identifier id'>at</span><span class='lt op'>&lt;</span><span class='regexp val'>/th&gt;
+          &lt;/</span><span class='tr identifier id'>tr</span><span class='gt op'>&gt;</span>
+        <span class='lt op'>&lt;</span><span class='regexp val'>/thead&gt;
+        &lt;tbody&gt;
+
+          &lt;tr id=&quot;post_1&quot; class=&quot;post odd&quot;&gt;
+            &lt;td&gt;Jim Beam&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+            <span class='lt op'>&lt;</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span><span class='Something constant id'>Something</span><span class='lt op'>&lt;</span><span class='regexp val'>/td&gt;
+
+            &lt;td&gt;2009-11-15 02:42:48 UTC&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+          <span class='lt op'>&lt;</span><span class='regexp val'>/tr&gt;
+          &lt;tr id=&quot;post_2&quot; class=&quot;post even&quot;&gt;
+            &lt;td&gt;Jack Daniels&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+
+            <span class='lt op'>&lt;</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span><span class='Second constant id'>Second</span> <span class='Post constant id'>Post</span><span class='lt op'>&lt;</span><span class='regexp val'>/td&gt;
+            &lt;td&gt;2009-11-16 00:11:00 UTC&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+          <span class='lt op'>&lt;</span><span class='regexp val'>/tr&gt;
+          &lt;tr id=&quot;post_3&quot; class=&quot;post odd&quot;&gt;
+
+            &lt;td&gt;&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+            <span class='lt op'>&lt;</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span><span class='Something constant id'>Something</span> <span class='else else kw'>else</span><span class='lt op'>&lt;</span><span class='regexp val'>/td&gt;
+            &lt;td&gt;2009-11-16 00:11:30 UTC&lt;/</span><span class='td identifier id'>td</span><span class='gt op'>&gt;</span>
+
+          <span class='lt op'>&lt;</span><span class='regexp val'>/tr&gt;
+        &lt;/</span><span class='tbody identifier id'>tbody</span><span class='gt op'>&gt;</span>
+      <span class='lt op'>&lt;</span><span class='regexp val'>/table&gt;
+    </span></pre>
+
+    <h2>Default Options and Tabletastic initializer</h2>
+
+    <p>As of version 0.2.0, you can now setup some of your own defaults in an initializer file.</p>
+    <p>
+      For example, create a file called tabletastic.rb in your config/initializers folder.
+      Within that file, there are several defaults that you can setup for yourself, including:
+    </p>
+
+    <pre>Tabletastic.default_table_html</pre>
+    <pre>Tabletastic.default_table_block</pre>
+
+    <p>
+      Both of these options are setup up so that inline options will still
+      override whatever they are set to, but providing them here will save you
+      some code if you commonly reuse options.
+    </p>
+    <p>
+      By default, <tt>default_table_html</tt> is simple an empty hash
+      <tt>{}</tt>. By providing your own defaults, you can ensure that all of
+      your tables have a specific html <tt>class</tt> or <tt>cellspacing</tt>, or
+      whatever.
+    </p>
+    <p>
+      If <tt>Tabletastic.default_table_html</tt> is set to <tt>{:cellspacing
+      =&gt; 0, :class =&gt; 'yowza'}</tt>, then all tabletastic tables will have
+      this html by default, unless overridden:
+    </p>
+
+    <pre>table_for(@posts) do |t| # body of block removed for brevity</pre>
+
+    <p> will produce:</p>
+
+    <pre class="code">
+      <span class='lt op'>&lt;</span><span class='table identifier id'>table</span> <span class='class class kw'>class</span><span class='assign token'>=</span><span class='string val'>&quot;yowza&quot;</span> <span class='cellspacing identifier id'>cellspacing</span><span class='assign token'>=</span><span class='string val'>&quot;0&quot;</span> <span class='id identifier id'>id</span><span class='assign token'>=</span><span class='string val'>&quot;posts&quot;</span><span class='gt op'>&gt;</span>
+    </pre>
+
+    <p>
+      Similarly, all of those calls to <tt>table_for</tt> can get boring since
+      you might be using the same block every time. The option
+      <tt>default_table_block</tt> lets you set a default lambda so that you can
+      omit the block with <tt>table_for</tt>. Since by default
+      <tt>default_table_block</tt> is set to <tt>lambda{|table| table.data}</tt>,
+      the following:
+    </p>
+
+    <pre>&lt;%= table_for(@posts) %&gt;</pre>
+
+    <p>will be the same as</p>
+
+    <pre>&lt;%= table_for(@posts) do |t|
+        t.data
+      end %&gt;
+    </pre>
+
+    <p>
+      However, just like <tt>default_table_html</tt> , you can set a different
+      block in the initializer file for your block to default to.
+    </p>
+
+    <p>For example:</p>
+
+    <pre>Tabletastic.<span class='default_table_block identifier id'>default_table_block</span> <span class='assign token'>=</span> <span class='lambda identifier id'>lambda</span> <span class='lbrace token'>{</span><span class='bitor op'>|</span><span class='table identifier id'>table</span><span class='bitor op'>|</span> <span class='table identifier id'>table</span><span class='dot token'>.</span><span class='data identifier id'>data</span> <span class='symbol val'>:actions</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:all</span> <span class='rbrace token'>}</span></pre>
+
+    <p>
+      will make the following equivalent:
+    </p>
+
+    <pre>&lt;%= table_for(@posts) %&gt;</pre>
+
+    <pre>
+      &lt;%= table_for(@posts) do |t|
+        t.data :actions =&gt; :all
+      end %&gt;
+    </pre>
+
+    <p>
+      And to omit those action links, you can just use <tt>table_for</tt> the
+      old-fashioned way:
+    </p>
+
+    <pre>
+      &lt;%= table_for(@posts) do |t|
+        t.data
+      end %&gt;
+    </pre>
+
 
     <div class="footer">
       get the source code on GitHub : <a href="http://github.com/jgdavey/tabletastic">jgdavey/tabletastic</a>
