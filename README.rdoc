@@ -34,11 +34,11 @@ goodness that tabular data should have, i.e. a +thead+ and +tbody+ element.
 
 == NOTICE: Rails 3 only!
 
-As of version 0.2.0, this project is <strong>no longer compatible with Rails 2</strong>.
-To use, make sure you're using the latest release of Rails 3 (beta 2 at this time).
+As of version 0.2.0, this project is <b>no longer compatible with Rails 2</b>.
+To use, make sure you're using the latest release of Rails 3.
 
-Also, the new Rails 3 idiom is for blocks in erb templates to be use <%= %>, so if you're
-upgrading, you MUST now use the <%= %> erb helpers when you call +table_for+.
+Also, the new Rails 3 idiom is for blocks in erb templates to be use <code><%= %></code>, so if you're
+upgrading, you MUST now use the <code><%= %></code> erb helpers when you call +table_for+.
 
 For example:
 
@@ -46,6 +46,33 @@ For example:
         t.data
       end %>
 
+The following would also be valid:
+
+  <%= table_for(@people) do |t| %>
+    <%= t.data %>
+  <% end %>
+
+Or in HAML:
+
+  = table_for(@people) do |t|
+    = t.data
+
+But, following the block helper conventions, the following would NOT be okay
+
+  <!-- Don't do this! -->
+  <%= table_for(@people) do |t| %>
+    <% t.data %>
+  <% end %>
+
+Or, in HAML:
+
+  -# Don't do this!
+  = table_for(@people) do |t|
+    - t.data
+
+This is because the +data+ method has output, and can optionally be called with a block.
+
+For more information about Rails 3 and Block helpers and the new conventions, check out {the Railscasts episode about ERB blocks}[http://railscasts.com/episodes/208-erb-blocks-in-rails-3]
 
 == Installation
 
@@ -55,6 +82,8 @@ In your Rails project, Gemfile:
 Or, for if you're behind the times, as a plugin:
   script/plugin install git://github.com/jgdavey/tabletastic.git
 
+Optionally, you can create an initializer at config/initializers/tabletastic.rb with the following:
+  Tabletastic.default_table_block = lambda {|table| table.data :actions => :all }
 
 == Usage
 
@@ -230,7 +259,7 @@ of your tables have a specific html +class+ or +cellspacing+, or whatever.
 If <code>Tabletastic.default_table_html</code> is set to <code>{:cellspacing => 0, :class => 'yowza'}</code>,
 then all tabletastic tables will have this html by default, unless overridden:
 
-  table_for(@posts) do |t|
+  table_for(@posts) do |t|  # body of block removed for brevity
 
 will produce:
 
@@ -248,7 +277,8 @@ will be the same as
         t.data
       end %>
 
-However, just like +default_table_html+, you can set a different block in the initializer file for your block to default to.
+However, just like +default_table_html+ , you can set a different block in the initializer file for your block to default to.
+
 For example:
 
   Tabletastic.default_table_block = lambda {|table| table.data :actions => :all }
@@ -272,7 +302,7 @@ And to omit those action links, you can just use +table_for+ the old-fashioned w
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
+* Commit, do not mess with rakefile, version, or changelog.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 

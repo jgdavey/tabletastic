@@ -1,5 +1,6 @@
 Git (for upcoming v0.2.0 release)
 
+* [DEPRECATED] use of table.data method without = in erb or haml. See README for more information.
 * Updating to Rails3 API and idioms
 * Adding default table html options
 * Adding default lambda (table block) so that table_for can be called without passing a block
