@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors = ["Joshua Davey"]
   s.email = 'josh@joshuadavey.com'
   s.homepage = 'http://github.com/jgdavey/tabletastic'
-  s.date = '2010-07-18'
+  s.date = '2010-08-02'
 
   s.summary = 'A smarter table builder for Rails collections'
   s.description = %q{A table builder for active record collections that produces semantically rich and accessible table markup}
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.require_path = 'lib'
   s.required_rubygems_version = ">= 1.3.6"
-  s.add_runtime_dependency('activesupport', '>= 3.0.0.beta4')
+  s.add_runtime_dependency('activesupport', '>= 3.0.0.rc')
   s.test_files = Dir.glob("spec/**/*_spec.rb") + %w{spec/spec_helper.rb}
   s.add_development_dependency "rspec"
 end
