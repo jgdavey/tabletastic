@@ -4,13 +4,13 @@ module Tabletastic
   class TableField
     @@association_methods = %w[to_label display_name full_name name title username login value to_str to_s]
 
-    attr_accessor :heading, :method_or_proc, :cell_html
+    attr_accessor :heading, :method_or_proc, :cell_html, :heading_html
 
     def initialize(*args, &proc)
       options = args.extract_options!
       method = args.first.to_sym
       @method_or_proc = block_given? ? proc : method
-      @cell_html = options[:cell_html]
+      @cell_html, @heading_html = options[:cell_html], options[:heading_html]
       @klass = options.delete(:klass)
       @heading = options.delete(:heading) || @klass.try(:human_attribute_name, method.to_s) || method.to_s.humanize
     end

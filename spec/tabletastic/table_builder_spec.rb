@@ -226,7 +226,7 @@ describe Tabletastic::TableBuilder do
       end
     end
 
-    context "with custom cell options" do
+    context "with custom heading option" do
       before do
         concat(table_for(@posts) do |t|
           t.data do
@@ -247,6 +247,18 @@ describe Tabletastic::TableBuilder do
           td.should have_tag("a", "The title of the post")
         end
       end
+    end
+
+    context "with custom heading html option" do
+      before do
+        concat( table_for(@posts) do |t|
+          t.data do
+            t.cell(:title, :heading_html => {:class => 'hoja'})
+          end
+        end)
+      end
+      subject { output_buffer }
+      it { should have_table_with_tag("th.hoja") }
     end
 
     context "with options[:actions]" do

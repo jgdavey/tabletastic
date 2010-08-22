@@ -69,7 +69,7 @@ module Tabletastic
       content_tag(:thead) do
         content_tag(:tr) do
           @table_fields.inject("") do |result,field|
-            result += content_tag(:th, field.heading)
+            result + content_tag(:th, field.heading, field.heading_html)
           end
         end
       end
