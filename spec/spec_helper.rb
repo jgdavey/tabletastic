@@ -21,7 +21,6 @@ Spork.prefork do
   end
 
   $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-  require 'tabletastic'
 
   module TabletasticSpecHelper
     include ActiveSupport
@@ -123,12 +122,13 @@ Spork.prefork do
     end
   end
 
-  include TabletasticSpecHelper
-  include Tabletastic
-  include Tabletastic::Helper
 end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
+  require 'tabletastic'
 
+  include TabletasticSpecHelper
+  include Tabletastic
+  include Tabletastic::Helper
 end
