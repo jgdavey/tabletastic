@@ -19,30 +19,22 @@ describe Tabletastic::TableBuilder do
         concat(table_for(@posts) { |t| t.data })
       end
 
-      it "should output table with id of the class of the collection" do
-        output_buffer.should have_tag("table#posts")
-      end
+      subject { output_buffer }
 
-      it "should output head" do
-        output_buffer.should have_table_with_tag("thead")
-      end
+      it { should have_tag("table#posts") }
+
+      it { output_buffer.should have_table_with_tag("thead") } 
 
       it "should have a <th> for each attribute" do
         # title and body
         output_buffer.should have_table_with_tag("th", :count => 2)
       end
 
-      it "should include header for Title" do
-        output_buffer.should have_table_with_tag("th", "Title")
-      end
+      it { output_buffer.should have_table_with_tag("th", "Title") }
 
-      it "should include header for Body" do
-        output_buffer.should have_table_with_tag("th", "Body")
-      end
+      it { output_buffer.should have_table_with_tag("th", "Body") }
 
-      it "should output body" do
-        output_buffer.should have_table_with_tag("tbody")
-      end
+      it { output_buffer.should have_table_with_tag("tbody") }
 
       it "should include a row for each record" do
         output_buffer.should have_table_with_tag("tbody") do |tbody|
@@ -55,9 +47,7 @@ describe Tabletastic::TableBuilder do
         output_buffer.should have_table_with_tag("td", "Lorem ipsum")
       end
 
-      it "should include the id for the <tr> for each record" do
-        output_buffer.should have_table_with_tag("tr#post_#{@post.id}")
-      end
+      it { output_buffer.should have_table_with_tag("tr#post_#{@post.id}") }
 
       it "should cycle row classes" do
         reset_output_buffer!
@@ -176,12 +166,11 @@ describe Tabletastic::TableBuilder do
           t.data(:title, :created_at)
         end)
       end
+      subject { output_buffer }
 
-      it "should call each method passed in, and only those methods" do
-        output_buffer.should have_table_with_tag("th", "Title")
-        output_buffer.should have_table_with_tag("th", "Created at")
-        output_buffer.should_not have_table_with_tag("th", "Body")
-      end
+      it { should have_table_with_tag("th", "Title") }
+      it { should have_table_with_tag("th", "Created at") }
+      it { should_not have_table_with_tag("th", "Body") }
     end
 
     context "with a list of attributes and options[:actions]" do
@@ -210,11 +199,11 @@ describe Tabletastic::TableBuilder do
         end)
       end
 
-      it "should include the data for the fields passed in" do
-        output_buffer.should have_table_with_tag("th", "Title")
-        output_buffer.should have_tag("td", "The title of the post")
-        output_buffer.should have_tag("td", "Lorem ipsum")
-      end
+      subject { output_buffer }
+
+      it { should have_table_with_tag("th", "Title") }
+      it { should have_tag("td", "The title of the post") }
+      it { should have_tag("td", "Lorem ipsum") }
     end
 
     context "with custom cell options" do
@@ -227,10 +216,10 @@ describe Tabletastic::TableBuilder do
         end)
       end
 
-      it "should change the heading label for :heading option" do
-        output_buffer.should have_table_with_tag("th", "FooBar")
-        output_buffer.should have_table_with_tag("th", "Body")
-      end
+      subject { output_buffer }
+
+      it { should have_table_with_tag("th", "FooBar") }
+      it { should have_table_with_tag("th", "Body") }
 
       it "should pass :cell_html to the cell" do
         output_buffer.should have_table_with_tag("td.batquux")
@@ -247,29 +236,30 @@ describe Tabletastic::TableBuilder do
         end)
       end
 
+      subject { output_buffer }
+
+      it { should have_table_with_tag("th:nth-child(1)", "Title") }
+      it { should have_table_with_tag("th:nth-child(2)", "Content") }
+      it { should have_table_with_tag("td:nth-child(2)", "Lorem ipsum") }
+      
       it "accepts a block as a lazy attribute" do
-        output_buffer.should have_table_with_tag("th:nth-child(1)", "Title")
         output_buffer.should have_table_with_tag("td:nth-child(1)") do |td|
           td.should have_tag("a", "The title of the post")
         end
       end
-
-      it "accepts a block as a lazy attribute (2)" do
-        output_buffer.should have_table_with_tag("th:nth-child(2)", "Content")
-        output_buffer.should have_table_with_tag("td:nth-child(2)", "Lorem ipsum")
-      end
     end
 
     context "with options[:actions]" do
-      it "includes path to post for :show" do
+      before do
         concat(table_for(@posts) do |t|
           t.data(:actions => :show) do
             t.cell(:title)
             t.cell(:body)
           end
         end)
-        output_buffer.should have_table_with_tag("td:nth-child(3) a[@href=\"/posts/#{@post.id}\"]")
       end
+      subject { output_buffer }
+      it { should have_table_with_tag("td:nth-child(3) a[@href=\"/posts/#{@post.id}\"]") }
     end
 
     context "and normal/association columns" do
@@ -297,7 +287,7 @@ describe Tabletastic::TableBuilder do
   end
 
   context "using human_attribute_names" do
-    it "should work" do
+    before do
       ::Post.stub!(:human_attribute_name).with('body').and_return("Blah blue")
 
       concat(table_for(@posts) do |t|
@@ -306,9 +296,10 @@ describe Tabletastic::TableBuilder do
           t.cell(:body)
         end
       end)
-
-      output_buffer.should have_table_with_tag("th", "Blah blue")
     end
+
+    subject { output_buffer }
+    it { should have_table_with_tag("th", "Blah blue") }
   end
 
   context "when table_for is not passed a block" do
