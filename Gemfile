@@ -10,4 +10,6 @@ group :test do
   gem 'activesupport', '3.0.0.rc'
   gem 'actionpack',    '3.0.0.rc'
   gem 'activerecord',  '3.0.0.rc'
+
+  gem 'autotest'
 end
