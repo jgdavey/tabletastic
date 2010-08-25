@@ -22,7 +22,6 @@ module Tabletastic
     # * With a block, which assumes you will use +cell+ method to build up
     #   the table
     #
-    #
     def data(*args, &block) # :yields: tablebody
       options = args.extract_options!
       if block_given?
@@ -60,8 +59,8 @@ module Tabletastic
       options.merge!(:klass => klass)
       args << options
       @table_fields << TableField.new(*args, &proc)
-      # Since this will likely be called with <%= %> (aka 'concat'), explicitly return an empty string
-      # This suppresses unwanted output
+      # Since this will likely be called with <%= %> (aka 'concat'), explicitly return an 
+      # empty string; this suppresses unwanted output
       return ""
     end
 
