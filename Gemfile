@@ -7,9 +7,6 @@ group :test do
   gem 'diff-lcs'
   gem 'rspec_tag_matchers'
 
-  gem 'activesupport', '3.0.0.rc2'
-  gem 'actionpack',    '3.0.0.rc2'
-  gem 'activerecord',  '3.0.0.rc2'
-
+  gem 'rails', '~>3.0.0'
   gem 'autotest'
 end
