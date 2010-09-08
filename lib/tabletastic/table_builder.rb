@@ -27,7 +27,7 @@ module Tabletastic
       if block_given?
         yield self
       else
-        @table_fields = args.empty? ? active_record_fields : args.collect {|f| TableField.new(f.to_sym)}
+        @table_fields = args.empty? ? orm_fields : args.collect {|f| TableField.new(f.to_sym)}
       end
       action_cells(options[:actions], options[:action_prefix])
       ["\n", head, "\n", body, "\n"].join("").html_safe
@@ -120,15 +120,28 @@ module Tabletastic
 
     protected
 
-    def active_record_fields
+    def orm_fields
       return [] if klass.blank?
-      fields = klass.content_columns.map(&:name)
-      fields += active_record_association_reflections
+      fields = if klass.respond_to?(:content_columns)
+        active_record_fields
+      elsif klass.respond_to?(:fields)
+        mongoid_fields
+      else
+        []
+      end
       fields -= @@default_hidden_columns
       fields.collect {|f| TableField.new(f.to_sym)}
     end
 
     private
+
+    def mongoid_fields
+      klass.fields.keys
+    end
+
+    def active_record_fields
+      klass.content_columns.map(&:name) + active_record_association_reflections
+    end
 
     def active_record_association_reflections
       return [] unless klass.respond_to?(:reflect_on_all_associations)

@@ -60,6 +60,21 @@ describe Tabletastic::TableBuilder do
         output_buffer.should have_table_with_tag("tr.even")
       end
 
+      context "mongoid collection" do
+        before do
+          reset_output_buffer!
+          ::Post.stub!(:respond_to?).with(:content_columns).and_return(false)
+          ::Post.stub!(:respond_to?).with(:fields).and_return(true)
+          ::Post.stub!(:fields).and_return({'title' => '', 'created_at' => ''})
+          concat(table_for(@posts) { |t| t.data })
+        end
+
+        it "should detect fields properly" do
+          output_buffer.should have_table_with_tag("td", "The title of the post")
+          output_buffer.should_not have_table_with_tag("td", "Lorem ipsum")
+        end
+      end
+
       context "when collection has associations" do
         it "should handle belongs_to associations" do
           ::Post.stub!(:reflect_on_all_associations).with(:belongs_to).and_return([@mock_reflection_belongs_to_author])
