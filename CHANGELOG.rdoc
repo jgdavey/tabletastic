@@ -1,10 +1,12 @@
 Git (for upcoming v0.2.0 release)
 
 * [DEPRECATED] use of table.data method without = in erb or haml. See README for more information.
-* Updating to Rails3 API and idioms
-* Adding default table html options
-* Adding default lambda (table block) so that table_for can be called without passing a block
-* Adding has_one associations
+* Update to Rails 3 API and idioms
+* Add default table html options
+* Add default lambda (table block) so that table_for can be called without passing a block
+* Add has_one associations
+* Add heading html hook for <th> elements
+* Super-basic mongoid support (2.x branch)
 
 v0.1.3 (Dec 28, 2009)
 
