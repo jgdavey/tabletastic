@@ -11,10 +11,13 @@ Gem::Specification.new do |s|
   s.authors = ["Joshua Davey"]
   s.email = 'josh@joshuadavey.com'
   s.homepage = 'http://github.com/jgdavey/tabletastic'
-  s.date = '2010-08-02'
+  s.date = '2010-09-11'
 
   s.summary = 'A smarter table builder for Rails collections'
-  s.description = %q{A table builder for active record collections that produces semantically rich and accessible table markup}
+  s.description = <<-EOT
+    A table builder for active record collections that
+    produces semantically rich and accessible table markup
+  EOT
 
   s.extra_rdoc_files = ["README.rdoc", "LICENSE"]
   s.files = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.rdoc CHANGELOG.rdoc init.rb)
