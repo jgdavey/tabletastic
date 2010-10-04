@@ -6,31 +6,27 @@ task :build do
 end
 
 task :release => :build do
+  system "git tag v#{Tabletastic::VERSION}"
   system "gem push tabletastic-#{Tabletastic::VERSION}"
 end
 
 # == RSpec
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
+require 'rspec/core/rake_task'
+
+desc "Run all specs"
+RSpec::Core::RakeTask.new(:spec) do |spec|
 end
 
-desc 'Test the tabletastic plugin with specdoc formatting and colors'
-Spec::Rake::SpecTask.new('specdoc') do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-  t.spec_opts = ["--format specdoc", "-c"]
+desc "Test the tabletastic plugin with specdoc formatting and colors"
+RSpec::Core::RakeTask.new(:specdoc) do |t|
+  t.spec_opts = ["--format documentation", "-c"]
 end
 
-desc 'Test the tabletastic plugin with rcov'
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
+desc "Test the tabletastic plugin with rcov"
+RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
   spec.rcov_opts = ['--exclude', 'spec,Library']
 end
-
-task :spec => :check_dependencies
 
 task :default => :spec
 
