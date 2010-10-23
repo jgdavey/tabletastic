@@ -105,7 +105,13 @@ module Tabletastic
     def action_link(action, prefix)
       html_class = "actions #{action.to_s}_link"
       proc = lambda do |resource|
-        compound_resource = [prefix, resource].compact
+        if prefix.kind_of?(Array)
+          # So prefix is already an array
+          compound_resource = prefix.dup
+          compound_resource.push(resource)
+        else
+          compound_resource = [prefix, resource].compact
+        end
         case action
         when :show
           @template.link_to("Show", compound_resource)
