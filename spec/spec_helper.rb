@@ -45,6 +45,13 @@ Spork.prefork do
     end
 
     module ::RspecTagMatchers
+      class HaveTag
+        def description
+          description = "have tag <#@selector>"
+          description << " with inner text '#@inner_text'" if @inner_text
+          description
+        end
+      end
       def have_table_with_tag(selector, inner_text_or_options = nil, options = {}, &block)
         HaveTag.new("table", nil, {}) &&
           HaveTag.new(selector, inner_text_or_options, options, &block)
