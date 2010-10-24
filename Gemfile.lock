@@ -77,7 +77,6 @@ GEM
     rspec_tag_matchers (1.0.0)
       nokogiri (>= 1.4.0)
       rspec-rails (>= 1.2.6)
-    spork (0.8.4)
     thor (0.14.3)
     treetop (1.4.8)
       polyglot (>= 0.3.1)
@@ -93,4 +92,3 @@ DEPENDENCIES
   rails (~> 3.0.1)
   rspec (~> 2.0.1)
   rspec_tag_matchers
-  spork
