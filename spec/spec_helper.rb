@@ -54,14 +54,22 @@ module TabletasticSpecHelper
     end
   end
 
-  class ::Post
+  class MockARModel
     def id
     end
+    def to_key
+      [id]
+    end
+    def self.human_attribute_name(col)
+      col.humanize if col
+    end
+    def self.model_name
+      ActiveModel::Name.new(self)
+    end
   end
-  class ::Author
-  end
-  class ::Profile
-  end
+  class ::Author < MockARModel; end
+  class ::Post < MockARModel; end
+  class ::Profile < MockARModel; end
 
   def mock_everything
     def post_path(post); "/posts/#{post.id}"; end
@@ -70,41 +78,25 @@ module TabletasticSpecHelper
     def edit_admin_post_path(post); "/admin/posts/#{post.id}/edit"; end
 
     # Sometimes we need a mock @post object and some Authors for belongs_to
-    @post = mock('post')
-    @post.stub!(:class).and_return(::Post)
-    @post.stub!(:id).and_return(nil)
+    @post = Post.new
+    @post.stub(:id => nil)
     @post.stub!(:author)
-    @post.stub!(:to_key).and_return([2])
     ::Post.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
-    ::Post.stub!(:model_name).and_return(ActiveModel::Name.new(::Post))
 
-    @fred = mock('author', :to_key => nil)
-    @fred.stub!(:class).and_return(::Author)
-    @fred.stub!(:name).and_return('Fred Smith')
-    @fred.stub!(:id).and_return(37)
+    @fred = Author.new
+    @fred.stub(:name => "Fred Smith", :id => 37)
 
-    @profile = mock('profile')
-    @profile.stub!(:author).and_return(@fred)
-    @profile.stub!(:bio).and_return("This is my bio")
-    @fred.stub!(:profile).and_return(@profile)
+    @profile = Profile.new
+    @profile.stub(:author => @fred, :bio => "This is my bio")
+    @fred.stub(:profile => @profile)
 
     ::Author.stub!(:content_columns).and_return([mock('column', :name => "name")])
-
     ::Author.stub!(:find).and_return([@fred])
-    ::Author.stub!(:human_attribute_name).and_return { |column_name| column_name.humanize }
-    ::Author.stub!(:human_name).and_return('Author')
-    ::Author.stub!(:model_name).and_return(ActiveModel::Name.new(::Author))
 
-    @freds_post = mock('post')
-    @freds_post.stub!(:class).and_return(::Post)
-    @freds_post.stub!(:title).and_return('Fred\'s Post')
+    @freds_post = Post.new
+    @freds_post.stub(:title => "Fred's Post", :id => 19, :author => @fred, :author_id => @fred.id)
     @freds_post.stub!(:body)
-    @freds_post.stub!(:id).and_return(19)
-    @freds_post.stub!(:to_key).and_return([19])
-    @freds_post.stub!(:author).and_return(@fred)
-    @freds_post.stub!(:author_id).and_return(@fred.id)
-    @fred.stub!(:posts).and_return([@freds_post])
-    @fred.stub!(:post_ids).and_return([@freds_post.id])
+    @fred.stub(:posts => [@freds_post])
 
     @mock_reflection_belongs_to_author = mock('reflection1', :options => {}, :name => :author, :macro => :belongs_to, :collection => false)
 
