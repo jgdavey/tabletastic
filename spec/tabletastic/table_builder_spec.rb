@@ -65,6 +65,7 @@ describe Tabletastic::TableBuilder do
           reset_output_buffer!
           ::Post.stub!(:respond_to?).with(:content_columns).and_return(false)
           ::Post.stub!(:respond_to?).with(:fields).and_return(true)
+          ::Post.stub!(:respond_to?).with(:empty?).and_return(false)
           ::Post.stub!(:fields).and_return({'title' => '', 'created_at' => ''})
           concat(table_for(@posts) { |t| t.data })
         end
