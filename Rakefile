@@ -1,13 +1,23 @@
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require "tabletastic/version"
 
+def gem_file
+  "tabletastic-#{current_version}.gem"
+end
+
+def current_version
+  "#{Tabletastic::VERSION}"
+end
+
 task :build do
+  system "mkdir -p ./pkg"
   system "gem build tabletastic.gemspec"
+  system "mv #{gem_file} pkg/"
 end
 
 task :release => :build do
-  system "git tag v#{Tabletastic::VERSION}"
-  system "gem push tabletastic-#{Tabletastic::VERSION}"
+  system "git tag v#{current_version}"
+  system "gem push pkg/#{gem_file}"
 end
 
 # == RSpec
