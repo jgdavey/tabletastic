@@ -144,34 +144,66 @@ describe Tabletastic::TableBuilder do
       end
 
       context "with options[:actions_prefix]" do
-        it "includes path to admin post for :show" do
-          concat(table_for(@posts) do |t|
-            t.data(:actions => :show, :action_prefix => :admin)
-          end)
-          output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Show")
+        context "with a single symbol as argument" do
+          it "includes path to admin post for :show" do
+            concat(table_for(@posts) do |t|
+              t.data(:actions => :show, :action_prefix => :admin)
+            end)
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Show")
+          end
+
+          it "includes path to admin post for :edit" do
+            concat(table_for(@posts) do |t|
+              t.data(:actions => :edit, :action_prefix => :admin)
+            end)
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}/edit\"]", "Edit")
+          end
+
+          it "includes path to admin post for :destroy" do
+            concat(table_for(@posts) do |t|
+              t.data(:actions => :destroy, :action_prefix => :admin)
+            end)
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Destroy")
+          end
+
+          it "includes path to admin for all actions" do
+            concat(table_for(@posts) do |t|
+              concat(t.data(:actions => :all, :action_prefix => :admin))
+            end)
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Show")
+            output_buffer.should have_tag("td:nth-child(4) a[@href=\"/admin/posts/#{@post.id}/edit\"]", "Edit")
+            output_buffer.should have_tag("td:nth-child(5) a[@href=\"/admin/posts/#{@post.id}\"]", "Destroy")
+          end
         end
 
-        it "includes path to admin post for :edit" do
-          concat(table_for(@posts) do |t|
-            t.data(:actions => :edit, :action_prefix => :admin)
-          end)
-          output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}/edit\"]", "Edit")
+        context "with a resource as an argument" do
+          it "nests the link within the resource correctly for :show" do
+            concat(table_for(@posts) do |t|
+              t.data(:actions => :show, :action_prefix => @fred)
+            end)
+            output_buffer.should have_tag("td:nth-child(3) a[@href=\"/authors/#{@fred.id}/posts/#{@post.id}\"]", "Show")
+          end
         end
 
-        it "includes path to admin post for :destroy" do
-          concat(table_for(@posts) do |t|
-            t.data(:actions => :destroy, :action_prefix => :admin)
-          end)
-          output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Destroy")
-        end
-
-        it "includes path to admin for all actions" do
-          concat(table_for(@posts) do |t|
-            concat(t.data(:actions => :all, :action_prefix => :admin))
-          end)
-          output_buffer.should have_tag("td:nth-child(3) a[@href=\"/admin/posts/#{@post.id}\"]", "Show")
-          output_buffer.should have_tag("td:nth-child(4) a[@href=\"/admin/posts/#{@post.id}/edit\"]", "Edit")
-          output_buffer.should have_tag("td:nth-child(5) a[@href=\"/admin/posts/#{@post.id}\"]", "Destroy")
+        context "with an array as an argument" do
+          it "nests correctly for namespace and resource for :show" do
+            concat(table_for(@posts) do |t|
+              t.data(:actions => :show, :action_prefix => [:admin, @fred])
+            end)
+            output_buffer.should have_tag(
+              "td a[@href=\"/admin/authors/#{@fred.id}/posts/#{@post.id}\"]", "Show")
+          end
+          it "includes path to admin for all actions" do
+            concat(table_for(@posts) do |t|
+              concat(t.data(:actions => :all, :action_prefix => [:admin, @fred]))
+            end)
+            output_buffer.should have_tag(
+              "td a[@href=\"/admin/authors/#{@fred.id}/posts/#{@post.id}\"]", "Show")
+            output_buffer.should have_tag(
+              "td a[@href=\"/admin/authors/#{@fred.id}/posts/#{@post.id}/edit\"]", "Edit")
+            output_buffer.should have_tag(
+              "td a[@href=\"/admin/authors/#{@fred.id}/posts/#{@post.id}\"]", "Destroy")
+          end
         end
       end
     end
