@@ -104,24 +104,21 @@ module Tabletastic
     # Dynamically builds links for the action
     def action_link(action, prefix)
       html_class = "actions #{action.to_s}_link"
-      proc = lambda do |resource|
-        if prefix.kind_of?(Array)
-          # So prefix is already an array
-          compound_resource = prefix.dup
-          compound_resource.push(resource)
-        else
-          compound_resource = [prefix, resource].compact
-        end
+      block = lambda do |resource|
+        compound_resource = [prefix, resource].compact
+        compound_resource.flatten! if prefix.kind_of?(Array)
         case action
         when :show
           @template.link_to("Show", compound_resource)
         when :destroy
-          @template.link_to("Destroy", compound_resource, :method => :delete, :confirm => @@destroy_confirm_message)
+          @template.link_to("Destroy", compound_resource,
+                            :method => :delete, :confirm => @@destroy_confirm_message)
         else # edit, other resource GET actions
-          @template.link_to(action.to_s.titleize, @template.polymorphic_path(compound_resource, :action => action))
+          @template.link_to(action.to_s.titleize,
+                            @template.polymorphic_path(compound_resource, :action => action))
         end
       end
-      self.cell(action, :heading => "", :cell_html => {:class => html_class}, &proc)
+      self.cell(action, :heading => "", :cell_html => {:class => html_class}, &block)
     end
 
     protected
