@@ -1,12 +1,14 @@
-Git (for upcoming v0.2.0 release)
+v0.2.0 (Oct 24, 2010)
 
-* [DEPRECATED] use of table.data method without = in erb or haml. See README for more information.
+* This gem is now Rails 3 only
 * Update to Rails 3 API and idioms
+* [DEPRECATED] use of table.data method without = in erb or haml. See README for more information.
 * Add default table html options
 * Add default lambda (table block) so that table_for can be called without passing a block
 * Add has_one associations
 * Add heading html hook for <th> elements
 * Super-basic mongoid support (2.x branch)
+* Add ability to pass :action_prefix an array (Thanks, brunowernimont)
 
 v0.1.3 (Dec 28, 2009)
 
