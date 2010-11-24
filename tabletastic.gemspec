@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors  = ["Joshua Davey"]
   s.email    = 'josh@joshuadavey.com'
   s.homepage = 'http://github.com/jgdavey/tabletastic'
-  s.date     = '2010-09-11'
+  s.date     = '2010-11-23'
 
   s.summary  = 'A smarter table builder for Rails collections'
   s.description = <<-EOT
