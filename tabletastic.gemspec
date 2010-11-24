@@ -4,16 +4,16 @@ $:.unshift lib unless $:.include?(lib)
 require 'tabletastic/version'
 
 Gem::Specification.new do |s|
-  s.name = 'tabletastic'
-  s.version = Tabletastic::VERSION
-  s.platform    = Gem::Platform::RUBY
+  s.name     = 'tabletastic'
+  s.version  = Tabletastic::VERSION
+  s.platform = Gem::Platform::RUBY
 
-  s.authors = ["Joshua Davey"]
-  s.email = 'josh@joshuadavey.com'
+  s.authors  = ["Joshua Davey"]
+  s.email    = 'josh@joshuadavey.com'
   s.homepage = 'http://github.com/jgdavey/tabletastic'
-  s.date = '2010-09-11'
+  s.date     = '2010-09-11'
 
-  s.summary = 'A smarter table builder for Rails collections'
+  s.summary  = 'A smarter table builder for Rails collections'
   s.description = <<-EOT
     A table builder for active record collections that
     produces semantically rich and accessible table markup
