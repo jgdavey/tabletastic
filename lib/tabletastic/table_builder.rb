@@ -69,7 +69,7 @@ module Tabletastic
         content_tag(:tr) do
           @table_fields.inject("") do |result,field|
             result + content_tag(:th, field.heading, field.heading_html)
-          end
+          end.html_safe
         end
       end
     end
@@ -81,14 +81,14 @@ module Tabletastic
           rows += @template.content_tag_for(:tr, record, :class => rowclass) do
             cells_for_row(record)
           end + "\n"
-        end
+        end.html_safe
       end
     end
 
     def cells_for_row(record)
       @table_fields.inject("") do |cells, field|
         cells + content_tag(:td, field.cell_data(record), field.cell_html)
-      end
+      end.html_safe
     end
 
     # Used internally to build up cells for common CRUD actions
