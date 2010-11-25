@@ -3,13 +3,13 @@ require File.join(File.dirname(__FILE__), 'table_field')
 module Tabletastic
   class TableBuilder
     @@default_hidden_columns = %w[created_at updated_at created_on updated_on lock_version version]
-    @@destroy_confirm_message = "Are you sure?"
 
     attr_reader   :collection, :klass, :table_fields
 
     def initialize(collection, klass, template)
       @collection, @klass, @template = collection, klass, template
       @table_fields = []
+      @@destroy_confirm_message = I18n.translate("tabletastic.actions.are_you_sure?", :default => "Are you sure?")
     end
 
     # builds up the fields that the table will include,
@@ -68,7 +68,11 @@ module Tabletastic
       content_tag(:thead) do
         content_tag(:tr) do
           @table_fields.inject("") do |result,field|
-            result + content_tag(:th, field.heading, field.heading_html)
+            field_heading = field.heading.to_s.downcase
+            localised_heading = I18n.translate(field_heading,
+                                               :scope => [:tabletastic, :models, klass.model_name.collection.singularize],
+                                               :default => field.heading) unless(field.heading.empty?)
+            result + content_tag(:th, localised_heading, field.heading_html)
           end.html_safe
         end
       end
@@ -109,12 +113,15 @@ module Tabletastic
         compound_resource.flatten! if prefix.kind_of?(Array)
         case action
         when :show
-          @template.link_to("Show", compound_resource)
+          link_title = I18n.translate("tabletastic.actions.show", :default => "Show")
+          @template.link_to(link_title, compound_resource)
         when :destroy
-          @template.link_to("Destroy", compound_resource,
+          link_title = I18n.translate("tabletastic.actions.destroy", :default => "Destroy")
+          @template.link_to(link_title, compound_resource,
                             :method => :delete, :confirm => @@destroy_confirm_message)
         else # edit, other resource GET actions
-          @template.link_to(action.to_s.titleize,
+          link_title = I18n.translate(action, :scope => "tabletastic.actions", :default => action.to_s.titleize)
+          @template.link_to(link_title,
                             @template.polymorphic_path(compound_resource, :action => action))
         end
       end

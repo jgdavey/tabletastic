@@ -239,6 +239,23 @@ will product html like:
 
 If it _still_ isn't flexible enough for your needs, it might be time to return to static html/erb.
 
+== Internationalization (I18n)
+
+Tabletastic has some i18n-features enabled by default.
+
+Here is an example of locales:
+
+  en:
+    tabletastic:
+        actions:
+            show: "See"
+            edit: "Edit"
+            destroy: "Remove"
+            are_you_sure?: "Are you sure ?"
+        models:
+            comment:
+                title: "Title"
+
 == Default Options and Tabletastic initializer
 
 As of version 0.2.0, you can now setup some of your own defaults in an initializer file.
