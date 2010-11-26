@@ -1,3 +1,7 @@
+v0.2.2 (Git)
+
+* Add basic i18n support
+
 v0.2.1 (Nov 23, 2010)
 
 * [BUGFIX] No longer inappropriately escapes rows for Rails 3.0.3
