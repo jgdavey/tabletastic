@@ -3,13 +3,13 @@ require File.join(File.dirname(__FILE__), 'table_field')
 module Tabletastic
   class TableBuilder
     @@default_hidden_columns = %w[created_at updated_at created_on updated_on lock_version version]
+    @@destroy_confirm_message = "Are you sure?"
 
     attr_reader   :collection, :klass, :table_fields
 
     def initialize(collection, klass, template)
       @collection, @klass, @template = collection, klass, template
       @table_fields = []
-      @@destroy_confirm_message = I18n.translate("tabletastic.actions.are_you_sure?", :default => "Are you sure?")
     end
 
     # builds up the fields that the table will include,
@@ -112,7 +112,7 @@ module Tabletastic
           @template.link_to(link_title(action), compound_resource)
         when :destroy
           @template.link_to(link_title(action), compound_resource,
-                            :method => :delete, :confirm => @@destroy_confirm_message)
+                            :method => :delete, :confirm => confirmation_message)
         else # edit, other resource GET actions
           @template.link_to(link_title(action),
                             @template.polymorphic_path(compound_resource, :action => action))
@@ -152,6 +152,10 @@ module Tabletastic
       associations += klass.reflect_on_all_associations(:belongs_to).map(&:name)
       associations += klass.reflect_on_all_associations(:has_one).map(&:name)
       associations
+    end
+
+    def confirmation_message
+      I18n.t("tabletastic.actions.are_you_sure?", :default => @@destroy_confirm_message)
     end
 
     def content_tag(name, content = nil, options = nil, escape = true, &block)
