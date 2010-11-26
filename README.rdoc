@@ -251,7 +251,7 @@ Here is an example of locales:
             show: "See"
             edit: "Edit"
             destroy: "Remove"
-            are_you_sure?: "Are you sure ?"
+            confirmation: "Are you sure?"
         models:
             comment:
                 title: "Title"

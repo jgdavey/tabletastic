@@ -155,7 +155,7 @@ module Tabletastic
     end
 
     def confirmation_message
-      I18n.t("tabletastic.actions.are_you_sure?", :default => @@destroy_confirm_message)
+      I18n.t("tabletastic.actions.confirmation", :default => @@destroy_confirm_message)
     end
 
     def content_tag(name, content = nil, options = nil, escape = true, &block)
