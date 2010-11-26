@@ -77,7 +77,7 @@ For more information about Rails 3 and Block helpers and the new conventions, ch
 == Installation
 
 In your Rails project, Gemfile:
-  gem "tabletastic", '~> 0.2.0.pre6'
+  gem "tabletastic"
 
 Or, for if you're behind the times, as a plugin:
   script/plugin install git://github.com/jgdavey/tabletastic.git
