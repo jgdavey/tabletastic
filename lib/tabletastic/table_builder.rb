@@ -68,11 +68,7 @@ module Tabletastic
       content_tag(:thead) do
         content_tag(:tr) do
           @table_fields.inject("") do |result,field|
-            field_heading = field.heading.to_s.downcase
-            localised_heading = I18n.translate(field_heading,
-                                               :scope => [:tabletastic, :models, klass.model_name.collection.singularize],
-                                               :default => field.heading) unless(field.heading.empty?)
-            result + content_tag(:th, localised_heading, field.heading_html)
+            result + content_tag(:th, field.heading, field.heading_html)
           end.html_safe
         end
       end
