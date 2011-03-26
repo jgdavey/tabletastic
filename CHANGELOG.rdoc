@@ -1,4 +1,4 @@
-v0.2.2 (Git)
+v0.2.2 (Mar 26, 2011)
 
 * Add basic i18n support
 
