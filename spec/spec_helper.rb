@@ -27,7 +27,6 @@ module TabletasticSpecHelper
   include ActionView::Helpers::ActiveModelHelper
   include ActionView::Helpers::RecordTagHelper
   include ActionView::Helpers::CaptureHelper
-  include ActionView::Helpers::RawOutputHelper
   include ActionDispatch::Routing::PolymorphicRoutes
 
   def self.included(base)
