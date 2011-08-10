@@ -325,4 +325,4 @@ And to omit those action links, you can just use +table_for+ the old-fashioned w
 
 == Copyright
 
-Copyright (c) 2010 Joshua Davey. See LICENSE for details.
+Copyright (c) 2011 Joshua Davey. See LICENSE for details.
