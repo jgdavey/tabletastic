@@ -1,5 +1,7 @@
 = Tabletastic
 
+http://travis-ci.org/jgdavey/tabletastic.png
+
 Inspired by the projects table_builder and formtastic,
 I realized how often I created tables for my active record collections.
 This is my attempt to simplify this (the default scaffold):
