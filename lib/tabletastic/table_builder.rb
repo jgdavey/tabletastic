@@ -112,7 +112,7 @@ module Tabletastic
           @template.link_to(link_title(action), compound_resource)
         when :destroy
           @template.link_to(link_title(action), compound_resource,
-                            :method => :delete, :confirm => confirmation_message)
+                            :method => :delete, :data => { :confirm => confirmation_message })
         else # edit, other resource GET actions
           @template.link_to(link_title(action),
                             @template.polymorphic_path(compound_resource, :action => action))
